@@ -4,22 +4,22 @@
 
 /* ── TOKENS ── */
 :root {
-  --bg:          #ffffff;
-  --bg-card:     #FFFDE7;
-  --bg-elevated: #FFF9C4;
-  --primary:     #F5C518;
-  --primary-dim: rgba(245, 197, 24, 0.15);
-  --accent:      #C8E044;
-  --accent-dim:  rgba(200, 224, 68, 0.18);
-  --warn:        #FFD700;
-  --warn-dim:    rgba(255, 215, 0, 0.15);
-  --safe-color:  #B8D940;
-  --green-pale:  #DFF0A0;
-  --green-dim:   rgba(184, 217, 64, 0.15);
-  --text:        #000000;
-  --muted:       #666666;
-  --muted-light: #999999;
-  --border:      #1A1A1A;
+  --bg:          #F6F8F3;
+  --bg-card:     #FFFFFF;
+  --bg-elevated: #D6F5E5;
+  --primary:     #1DB954;
+  --primary-dim: rgba(29, 185, 84, 0.14);
+  --accent:      #FFD600;
+  --accent-dim:  rgba(255, 214, 0, 0.18);
+  --warn:        #FF9800;
+  --warn-dim:    rgba(255, 152, 0, 0.15);
+  --safe-color:  #4ADE80;
+  --green-pale:  #AAFAD0;
+  --green-dim:   rgba(74, 222, 128, 0.14);
+  --text:        #0D1F12;
+  --muted:       #4A6254;
+  --muted-light: #7A9880;
+  --border:      #A8D8B8;
   --radius:      14px;
   --radius-sm:   8px;
   --radius-pill: 100px;
@@ -60,7 +60,7 @@ section { padding: 96px 6%; }
   padding: 14px 32px;
   border-radius: var(--radius-pill);
   transition: opacity 0.2s, transform 0.2s;
-  box-shadow: 0 0 24px rgba(245, 197, 24, 0.25);
+  box-shadow: 0 0 32px rgba(29, 185, 84, 0.40);
 }
 .btn-primary:hover { opacity: 0.88; transform: translateY(-2px); }
 
@@ -110,7 +110,7 @@ section { padding: 96px 6%; }
 .badge-primary {
   background: var(--primary-dim);
   color: var(--primary);
-  border: 1px solid rgba(245, 197, 24, 0.30);
+  border: 1px solid rgba(29, 185, 84, 0.35);
 }
 
 /* ── INGREDIENT TAGS ── */
@@ -123,9 +123,9 @@ section { padding: 96px 6%; }
   padding: 3px 10px;
   border-radius: var(--radius-pill);
 }
-.tag-safe    { background: rgba(184,217,64,0.20);  color: #6A8C00; }
-.tag-caution { background: rgba(255,215,0,0.20);  color: #B8860B; }
-.tag-avoid   { background: rgba(30,30,30,0.10);   color: #1A1A1A; }
+.tag-safe    { background: rgba(29,185,84,0.18);   color: #0D7A3A; }
+.tag-caution { background: rgba(255,214,0,0.25);   color: #856200; }
+.tag-avoid   { background: rgba(239,68,68,0.14);   color: #C02020; }
 
 /* ── TRIPLE RATING BADGE ── */
 .triple-rating {
@@ -146,7 +146,7 @@ section { padding: 96px 6%; }
   border: 1px solid var(--border);
 }
 .rating-pill .r-icon { font-size: 0.85rem; }
-.rating-pill.r-user    { color: #FFB800; }
+.rating-pill.r-user    { color: #FF9800; }
 .rating-pill.r-tox     { color: var(--primary); }
 .rating-pill.r-tox.med { color: var(--warn); }
 .rating-pill.r-tox.low { color: var(--accent); }
@@ -161,7 +161,7 @@ section { padding: 96px 6%; }
   align-items: center;
   justify-content: space-between;
   padding: 18px 6%;
-  background: rgba(255, 253, 231, 0.92);
+  background: rgba(240, 250, 244, 0.92);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
 }
@@ -182,7 +182,7 @@ section { padding: 96px 6%; }
 .nav-links a {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #555555;
+  color: #4A6254;
   transition: color 0.2s;
 }
 .nav-links a:hover { color: var(--text); }
