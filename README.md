@@ -109,3 +109,4 @@ Each product displays three distinct ratings:
 
 
 demo: scanning hackathon food
+-We going to remove the search button and replace it with a search bar
