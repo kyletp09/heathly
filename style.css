@@ -1,0 +1,67 @@
+/* Import clean modern font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Header */
+header {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: 600;
+}
+
+p {
+    opacity: 0.8;
+    margin-top: 10px;
+}
+
+/* Card section */
+.card {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 30px;
+    margin: 40px;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transition: 0.3s ease;
+}
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+/* Button */
+.btn {
+    margin-top: 20px;
+    padding: 12px 25px;
+    border-radius: 30px;
+    border: none;
+    background: #6366f1;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    .btn:hover {
+        background: #818cf8;
+    }
