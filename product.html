@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CeraVe Moisturizer — Healthly</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── PAGE-SPECIFIC: PRODUCT ── */
+
+    .page-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 100px 5% 80px;
+    }
+
+    /* Product Header */
+    .product-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 32px;
+      margin-bottom: 40px;
+    }
+    .product-thumb {
+      width: 100px; height: 100px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      flex-shrink: 0;
+    }
+    .product-meta .cat-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--primary-dim);
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    .product-meta h1 {
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+    .product-meta .brand {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    /* Triple Rating Block */
+    .triple-block {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .rating-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .rating-card:hover { border-color: rgba(255,255,255,0.15); }
+    .rating-card .rc-icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .rating-card .rc-value { font-size: 2rem; font-weight: 900; margin-bottom: 4px; }
+    .rating-card .rc-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+    .rating-card .rc-sub { font-size: 0.75rem; color: var(--muted); margin-top: 6px; }
+    .rc-stars { color: #FFB800; font-size: 0.9rem; margin-bottom: 4px; }
+    .rating-card.r-tox .rc-value { color: var(--warn); }
+    .rating-card.r-match .rc-value { color: var(--primary); }
+
+    /* Score bar in rating card */
+    .rc-bar { margin-top: 10px; }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 32px 0;
+    }
+
+    /* Ingredient List */
+    .ingredient-section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .ingredient-table { display: flex; flex-direction: column; gap: 6px; }
+    .ing-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      cursor: pointer;
+      transition: border-color 0.2s;
+      gap: 12px;
+    }
+    .ing-row:hover { border-color: rgba(255,255,255,0.15); }
+    .ing-row.safe    { border-left: 3px solid var(--primary); }
+    .ing-row.caution { border-left: 3px solid var(--warn); }
+    .ing-row.avoid   { border-left: 3px solid var(--accent); }
+    .ing-name { font-size: 0.9rem; font-weight: 600; flex: 1; }
+    .ing-function { font-size: 0.75rem; color: var(--muted); flex: 1; }
+    .ing-row .expand-icon {
+      font-size: 0.7rem;
+      color: var(--muted);
+      transition: transform 0.2s;
+    }
+    .ing-row.expanded .expand-icon { transform: rotate(180deg); }
+    .ing-detail {
+      display: none;
+      padding: 10px 16px 12px;
+      margin-top: -6px;
+      background: var(--bg-elevated);
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      border: 1px solid var(--border);
+      border-top: none;
+      font-size: 0.82rem;
+      color: var(--muted-light);
+      line-height: 1.6;
+    }
+    .ing-detail.open { display: block; }
+
+    /* Flagged section */
+    .flagged-section {
+      background: rgba(255,77,109,0.05);
+      border: 1px solid rgba(255,77,109,0.15);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .flagged-section h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .flagged-list { display: flex; flex-direction: column; gap: 8px; }
+    .flagged-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 14px;
+      background: rgba(255,77,109,0.06);
+      border-radius: var(--radius-sm);
+    }
+    .flagged-item .fi-name { font-size: 0.88rem; font-weight: 600; }
+    .flagged-item .fi-why  { font-size: 0.78rem; color: var(--muted-light); margin-top: 2px; }
+
+    /* Alternatives */
+    .alt-section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .alt-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .alt-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .alt-card:hover { border-color: rgba(0,229,160,0.2); transform: translateY(-2px); }
+    .alt-card .alt-emoji { font-size: 2rem; margin-bottom: 12px; }
+    .alt-card .alt-name  { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+    .alt-card .alt-brand { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; }
+    .alt-better { font-size: 0.75rem; color: var(--primary); font-weight: 600; }
+
+    /* Reviews */
+    .review-section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .review-list { display: flex; flex-direction: column; gap: 14px; }
+    .review-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .review-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .reviewer-info { display: flex; align-items: center; gap: 10px; }
+    .reviewer-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .reviewer-name { font-size: 0.88rem; font-weight: 600; }
+    .reviewer-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      margin-left: 6px;
+    }
+    .reviewer-badge.verified { background: var(--primary-dim); color: var(--primary); }
+    .reviewer-badge.pro { background: rgba(167,139,250,0.15); color: #a78bfa; }
+    .review-stars { color: #FFB800; font-size: 0.85rem; }
+    .review-text  { font-size: 0.85rem; color: var(--muted-light); line-height: 1.7; }
+
+    @media (max-width: 640px) {
+      .triple-block { grid-template-columns: 1fr; }
+      .product-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ── -->
+  <nav class="nav">
+    <a href="healthly.html" class="nav-logo">health<span>ly</span></a>
+    <ul class="nav-links">
+      <li><a href="search.html">← Back to Search</a></li>
+      <li><a href="healthly.html">Home</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-wrap">
+
+    <!-- Product Header -->
+    <div class="product-header">
+      <div class="product-thumb">🧴</div>
+      <div class="product-meta">
+        <span class="cat-badge">Skincare</span>
+        <h1>CeraVe Moisturizing Cream</h1>
+        <div class="brand">by CeraVe · 14 ingredients</div>
+        <div class="triple-rating">
+          <div class="rating-pill r-user"><span class="r-icon">⭐</span> 4.1</div>
+          <div class="rating-pill r-tox med"><span class="r-icon">☣️</span> 72</div>
+          <div class="rating-pill r-match"><span class="r-icon">🎯</span> 88%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Triple Rating Block -->
+    <div class="triple-block">
+      <div class="rating-card">
+        <div class="rc-icon">⭐</div>
+        <div class="rc-stars">★★★★☆</div>
+        <div class="rc-value" style="color:#FFB800">4.1</div>
+        <div class="rc-label">User Rating</div>
+        <div class="rc-sub">1,243 community reviews</div>
+      </div>
+      <div class="rating-card r-tox">
+        <div class="rc-icon">☣️</div>
+        <div class="rc-value">72</div>
+        <div class="rc-label">Toxicity Score</div>
+        <div class="rc-bar">
+          <div class="score-track">
+            <div class="score-fill medium" style="width:72%"></div>
+          </div>
+        </div>
+        <div class="rc-sub">By certified professionals</div>
+      </div>
+      <div class="rating-card r-match">
+        <div class="rc-icon">🎯</div>
+        <div class="rc-value">88%</div>
+        <div class="rc-label">Profile Match</div>
+        <div class="rc-bar">
+          <div class="score-track">
+            <div class="score-fill high" style="width:88%"></div>
+          </div>
+        </div>
+        <div class="rc-sub">Based on your health profile</div>
+      </div>
+    </div>
+
+    <!-- Flagged Ingredients -->
+    <div class="flagged-section">
+      <h2>⚠️ Flagged Ingredients (2)</h2>
+      <div class="flagged-list">
+        <div class="flagged-item">
+          <span class="tag tag-avoid" style="flex-shrink:0">Avoid</span>
+          <div>
+            <div class="fi-name">Methylparaben</div>
+            <div class="fi-why">Endocrine disruptor. May mimic estrogen and disrupt hormonal activity. Linked to reproductive concerns.</div>
+          </div>
+        </div>
+        <div class="flagged-item">
+          <span class="tag tag-caution" style="flex-shrink:0">Caution</span>
+          <div>
+            <div class="fi-name">Cetearyl Alcohol</div>
+            <div class="fi-why">Generally safe but can cause irritation in users with sensitive skin or eczema-prone conditions.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ingredient List -->
+    <div class="ingredient-section">
+      <h2>All Ingredients</h2>
+      <div class="ingredient-table">
+
+        <div class="ing-row safe" onclick="toggleDetail(this)">
+          <span class="ing-name">Ceramide NP</span>
+          <span class="ing-function">Skin Barrier</span>
+          <span class="tag tag-safe">Safe</span>
+          <span class="expand-icon">▼</span>
+        </div>
+        <div class="ing-detail">Ceramides are naturally occurring lipids found in skin. Ceramide NP helps restore and maintain the skin's barrier function. Widely considered safe and beneficial.</div>
+
+        <div class="ing-row safe" onclick="toggleDetail(this)">
+          <span class="ing-name">Hyaluronic Acid</span>
+          <span class="ing-function">Humectant</span>
+          <span class="tag tag-safe">Safe</span>
+          <span class="expand-icon">▼</span>
+        </div>
+        <div class="ing-detail">A naturally occurring polysaccharide that holds up to 1000x its weight in water. Excellent hydrating ingredient with a strong safety profile.</div>
+
+        <div class="ing-row safe" onclick="toggleDetail(this)">
+          <span class="ing-name">Niacinamide</span>
+          <span class="ing-function">Brightening</span>
+          <span class="tag tag-safe">Safe</span>
+          <span class="expand-icon">▼</span>
+        </div>
+        <div class="ing-detail">Vitamin B3 derivative. Helps improve skin tone, reduces pore appearance, and has anti-inflammatory properties. Well-tolerated by most skin types.</div>
+
+        <div class="ing-row caution" onclick="toggleDetail(this)">
+          <span class="ing-name">Cetearyl Alcohol</span>
+          <span class="ing-function">Emulsifier</span>
+          <span class="tag tag-caution">Caution</span>
+          <span class="expand-icon">▼</span>
+        </div>
+        <div class="ing-detail">A fatty alcohol (not drying). Generally safe but can cause reactions in sensitive skin individuals. Not related to drying alcohols like ethanol.</div>
+
+        <div class="ing-row avoid" onclick="toggleDetail(this)">
+          <span class="ing-name">Methylparaben</span>
+          <span class="ing-function">Preservative</span>
+          <span class="tag tag-avoid">Avoid</span>
+          <span class="expand-icon">▼</span>
+        </div>
+        <div class="ing-detail">Synthetic preservative. Classified as an endocrine disruptor. Has been detected in breast tissue samples. Banned in some countries for leave-on cosmetics.</div>
+
+        <div class="ing-row safe" onclick="toggleDetail(this)">
+          <span class="ing-name">Glycerin</span>
+          <span class="ing-function">Humectant</span>
+          <span class="tag tag-safe">Safe</span>
+          <span class="expand-icon">▼</span>
+        </div>
+        <div class="ing-detail">A naturally derived moisturizing ingredient. Attracts water to the skin's surface. One of the safest and most studied ingredients in cosmetics.</div>
+
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Cleaner Alternatives -->
+    <div class="alt-section">
+      <h2>🌿 Cleaner Alternatives</h2>
+      <div class="alt-grid">
+        <div class="alt-card">
+          <div class="alt-emoji">🫧</div>
+          <div class="alt-name">Vanicream Moisturizing Cream</div>
+          <div class="alt-brand">Vanicream</div>
+          <div class="triple-rating" style="margin-bottom:10px">
+            <div class="rating-pill r-tox" style="font-size:0.72rem;padding:3px 9px"><span>☣️</span> 91</div>
+            <div class="rating-pill r-match" style="font-size:0.72rem;padding:3px 9px"><span>🎯</span> 94%</div>
+          </div>
+          <div class="alt-better">↑ 19 pts cleaner · Better profile match</div>
+        </div>
+        <div class="alt-card">
+          <div class="alt-emoji">💧</div>
+          <div class="alt-name">First Aid Beauty Ultra Repair Cream</div>
+          <div class="alt-brand">First Aid Beauty</div>
+          <div class="triple-rating" style="margin-bottom:10px">
+            <div class="rating-pill r-tox" style="font-size:0.72rem;padding:3px 9px"><span>☣️</span> 85</div>
+            <div class="rating-pill r-match" style="font-size:0.72rem;padding:3px 9px"><span>🎯</span> 91%</div>
+          </div>
+          <div class="alt-better">↑ 13 pts cleaner · Fragrance-free</div>
+        </div>
+        <div class="alt-card">
+          <div class="alt-emoji">🌾</div>
+          <div class="alt-name">Weleda Skin Food</div>
+          <div class="alt-brand">Weleda</div>
+          <div class="triple-rating" style="margin-bottom:10px">
+            <div class="rating-pill r-tox" style="font-size:0.72rem;padding:3px 9px"><span>☣️</span> 88</div>
+            <div class="rating-pill r-match" style="font-size:0.72rem;padding:3px 9px"><span>🎯</span> 89%</div>
+          </div>
+          <div class="alt-better">↑ 16 pts cleaner · Natural formula</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Reviews -->
+    <div class="review-section">
+      <h2>Reviews</h2>
+      <div class="review-list">
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">JL</div>
+              <div>
+                <div class="reviewer-name">
+                  Jamie L.
+                  <span class="reviewer-badge verified">✓ Verified Purchase</span>
+                </div>
+                <div class="review-stars">★★★★☆</div>
+              </div>
+            </div>
+          </div>
+          <p class="review-text">Great daily moisturizer but I wish they'd swap out the parabens. Healthly flagged it and I ended up switching to Vanicream. Skin feels just as good with a cleaner formula.</p>
+        </div>
+
+        <div class="review-card" style="border-color:rgba(167,139,250,0.2)">
+          <div class="review-header">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar" style="color:#a78bfa">Dr</div>
+              <div>
+                <div class="reviewer-name">
+                  Dr. Sarah M., Dermatologist
+                  <span class="reviewer-badge pro">🔬 AI-Verified MD</span>
+                </div>
+                <div class="review-stars">★★★★☆</div>
+              </div>
+            </div>
+          </div>
+          <p class="review-text">CeraVe is a clinically effective moisturizer with evidence-backed ceramides. The methylparaben concentration is below regulatory limits, but I recommend patients with hormonal sensitivities choose paraben-free alternatives.</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">MK</div>
+              <div>
+                <div class="reviewer-name">
+                  Maria K.
+                  <span class="reviewer-badge verified">✓ Verified Purchase</span>
+                </div>
+                <div class="review-stars">★★★★★</div>
+              </div>
+            </div>
+          </div>
+          <p class="review-text">Works incredibly for my dry skin. The profile match was 88% for me and it's accurate — my skin has never felt better. Healthly also reminded me to check back in 3 months which was a nice touch!</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end page-wrap -->
+
+  <footer>
+    <div class="footer-logo">health<span>ly</span></div>
+    <p>A community that will eradicate the toxicity in our daily life.</p>
+    <p>© 2026 Healthly · Built with love at HOTH 13</p>
+  </footer>
+
+  <script>
+    function toggleDetail(row) {
+      row.classList.toggle('expanded');
+      const detail = row.nextElementSibling;
+      if (detail && detail.classList.contains('ing-detail')) {
+        detail.classList.toggle('open');
+      }
+    }
+  </script>
+</body>
+</html>

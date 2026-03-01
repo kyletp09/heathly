@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search — Healthly</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── PAGE-SPECIFIC: SEARCH ── */
+
+    .search-wrap {
+      padding: 100px 6% 80px;
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+
+    /* Search hero */
+    .search-hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .search-hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+    .search-hero h1 span { color: var(--primary); }
+    .search-hero p { font-size: 0.95rem; color: var(--muted); }
+
+    /* Search bar */
+    .search-bar-wrap {
+      position: relative;
+      max-width: 640px;
+      margin: 0 auto 28px;
+    }
+    .search-bar-wrap .s-icon {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 16px 20px 16px 52px;
+      font-size: 1rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0,229,160,0.1);
+    }
+
+    /* Category filter pills */
+    .filter-pills {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .pill {
+      padding: 8px 20px;
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--muted-light);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pill:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+    .pill.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #0F0F0F;
+    }
+
+    /* Layout: sidebar + grid */
+    .search-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* Filter sidebar */
+    .filter-sidebar {
+      position: sticky;
+      top: 84px;
+    }
+    .filter-sidebar h3 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .filter-group {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 12px;
+    }
+    .filter-group h4 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--muted-light);
+    }
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      font-size: 0.82rem;
+      color: var(--muted-light);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .filter-option:hover { color: var(--text); }
+    .filter-option input[type="checkbox"] { accent-color: var(--primary); width: 14px; height: 14px; }
+
+    .range-group { display: flex; flex-direction: column; gap: 8px; }
+    .range-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
+    }
+
+    /* Product grid */
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .results-header h2 { font-size: 1rem; font-weight: 700; }
+    .results-header .count { font-size: 0.82rem; color: var(--muted); }
+
+    .sort-select {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      color: var(--text);
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .product-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+      text-decoration: none;
+      display: block;
+      color: inherit;
+    }
+    .product-card:hover { transform: translateY(-4px); border-color: rgba(0,229,160,0.2); }
+
+    .pc-thumb {
+      width: 56px; height: 56px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin-bottom: 14px;
+    }
+    .pc-category {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .pc-name { font-size: 0.92rem; font-weight: 700; margin-bottom: 2px; line-height: 1.3; }
+    .pc-brand { font-size: 0.77rem; color: var(--muted); margin-bottom: 14px; }
+
+    .pc-ratings {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .pc-rating-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+    }
+    .pc-rating-pill.r-user    { color: #FFB800; }
+    .pc-rating-pill.r-tox     { color: var(--primary); }
+    .pc-rating-pill.r-tox.med { color: var(--warn); }
+    .pc-rating-pill.r-tox.low { color: var(--accent); }
+    .pc-rating-pill.r-match   { color: var(--primary); }
+
+    @media (max-width: 768px) {
+      .search-layout { grid-template-columns: 1fr; }
+      .filter-sidebar { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ── -->
+  <nav class="nav">
+    <a href="healthly.html" class="nav-logo">health<span>ly</span></a>
+    <ul class="nav-links">
+      <li><a href="healthly.html">Home</a></li>
+      <li><a href="healthly.html#features">Features</a></li>
+      <li><a href="healthly.html" class="btn-primary" style="padding:10px 22px;font-size:0.85rem">Sign Up</a></li>
+    </ul>
+  </nav>
+
+  <div class="search-wrap">
+
+    <!-- Search Hero -->
+    <div class="search-hero">
+      <div class="section-label">Ingredient Scanner</div>
+      <h1>Search any <span>product</span></h1>
+      <p>Food, skincare, makeup, supplements — we've got every label covered.</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar-wrap">
+      <span class="s-icon">🔍</span>
+      <input type="text" class="search-input" placeholder="Search by product name, brand, or ingredient…" id="searchInput" oninput="filterProducts()" />
+    </div>
+
+    <!-- Category Pills -->
+    <div class="filter-pills">
+      <button class="pill active" onclick="setCategory(this,'all')">All</button>
+      <button class="pill" onclick="setCategory(this,'food')">🥗 Food</button>
+      <button class="pill" onclick="setCategory(this,'beauty')">💄 Beauty</button>
+      <button class="pill" onclick="setCategory(this,'skincare')">🧴 Skincare</button>
+      <button class="pill" onclick="setCategory(this,'supplements')">💊 Supplements</button>
+      <button class="pill" onclick="setCategory(this,'household')">🧹 Household</button>
+    </div>
+
+    <!-- Layout -->
+    <div class="search-layout">
+
+      <!-- Sidebar Filters -->
+      <aside class="filter-sidebar">
+        <h3>Filters</h3>
+
+        <div class="filter-group">
+          <h4>Toxicity Score</h4>
+          <div class="range-group">
+            <input type="range" min="0" max="100" value="0" id="minTox" />
+            <div class="range-labels"><span>Min: <span id="minToxVal">0</span></span><span>100</span></div>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h4>Profile Match</h4>
+          <div class="range-group">
+            <input type="range" min="0" max="100" value="0" id="minMatch" />
+            <div class="range-labels"><span>Min: <span id="minMatchVal">0</span>%</span><span>100%</span></div>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h4>Reviews</h4>
+          <label class="filter-option">
+            <input type="checkbox" /> Verified Purchases Only
+          </label>
+          <label class="filter-option">
+            <input type="checkbox" /> Professional Reviews
+          </label>
+        </div>
+
+        <div class="filter-group">
+          <h4>Free From</h4>
+          <label class="filter-option"><input type="checkbox" /> Parabens</label>
+          <label class="filter-option"><input type="checkbox" /> Sulfates</label>
+          <label class="filter-option"><input type="checkbox" /> Fragrance</label>
+          <label class="filter-option"><input type="checkbox" /> Phthalates</label>
+        </div>
+      </aside>
+
+      <!-- Results -->
+      <div>
+        <div class="results-header">
+          <div>
+            <h2>Products</h2>
+            <span class="count" id="resultCount">Showing 12 results</span>
+          </div>
+          <select class="sort-select">
+            <option>Sort: Best Match</option>
+            <option>Sort: Toxicity Score</option>
+            <option>Sort: Profile Match</option>
+            <option>Sort: User Rating</option>
+          </select>
+        </div>
+
+        <div class="product-grid" id="productGrid">
+
+          <a href="product.html" class="product-card" data-name="cerave moisturizing cream" data-cat="skincare">
+            <div class="pc-thumb">🧴</div>
+            <div class="pc-category">Skincare</div>
+            <div class="pc-name">CeraVe Moisturizing Cream</div>
+            <div class="pc-brand">CeraVe</div>
+            <div class="pc-ratings">
+              <span class="pc-rating-pill r-user">⭐ 4.1</span>
+              <span class="pc-rating-pill r-tox med">☣️ 72</span>
+              <span class="pc-rating-pill r-match">🎯 88%</span>
+            </div>
+          </a>
+
+          <a href="product.html" class="product-card" data-name="neutrogena sunscreen spf 50" data-cat="beauty">
+            <div class="pc-thumb">☀️</div>
+            <div class="pc-category">Beauty</div>
+            <div class="pc-name">Neutrogena Sunscreen SPF 50</div>
+            <div class="pc-brand">Neutrogena</div>
+            <div class="pc-ratings">
+              <span class="pc-rating-pill r-user">⭐ 4.3</span>
+              <span class="pc-rating-pill r-tox low">☣️ 44</span>
+              <span class="pc-rating-pill r-match">🎯 71%</span>
+            </div>
+          </a>
+
+          <a href="product.html" class="product-card" data-name="KIND almond dark chocolate bar" data-cat="food">
+            <div class="pc-thumb">🍫</div>
+            <div class="pc-category">Food</div>
+            <div class="pc-name">KIND Dark Chocolate Almond Bar</div>
+            <div class="pc-brand">KIND</div>
+            <div class="pc-ratings">
+              <span class="pc-rating-pill r-user">⭐ 4.6</span>
+              <span class="pc-rating-pill r-tox">☣️ 88</span>
+              <span class="pc-rating-pill r-match">🎯 92%</span>
+            </div>
+          </a>
+
+          <a href="product.html" class="product-card" data-name="garden of life vitamin d3" data-cat="supplements">
+            <div class="pc-thumb">💊</div>
+            <div class="pc-category">Supplements</div>
+            <div class="pc-name">Garden of Life Vitamin D3</div>
+            <div class="pc-brand">Garden of Life</div>
+            <div class="pc-ratings">
+              <span class="pc-rating-pill r-user">⭐ 4.7</span>
+              <span class="pc-rating-pill r-tox">☣️ 95</span>
+              <span class="pc-rating-pill r-match">🎯 97%</span>
+            </div>
+          </a>
+
+          <a href="product.html" class="product-card" data-name="the ordinary niacinamide serum" data-cat="skincare">
+            <div class="pc-thumb">💧</div>
+            <div class="pc-category">Skincare</div>
+            <div class="pc-name">The Ordinary Niacinamide 10%</div>
+            <div class="pc-brand">The Ordinary</div>
+            <div class="pc-ratings">
+              <span class="pc-rating-pill r-user">⭐ 4.5</span>
+              <span class="pc-rating-pill r-tox">☣️ 91</span>
+              <span class="pc-rating-pill r-match">🎯 94%</span>
+            </div>
+          </a>
+
+          <a href="product.html" class="product-card" data-name="clif bar chocolate chip" data-cat="food">
+            <div class="pc-thumb">🍪</div>
+            <div class="pc-category">Food</div>
+            <div class="pc-name">CLIF Bar Chocolate Chip</div>
+            <div class="pc-brand">CLIF</div>
+            <div class="pc-ratings">
+              <span class="pc-rating-pill r-user">⭐ 4.0</span>
+              <span class="pc-rating-pill r-tox med">☣️ 61</span>
+              <span class="pc-rating-pill r-match">🎯 74%</span>
+            </div>
+          </a>
+
+          <a href="product.html" class="product-card" data-name="la roche posay cleanser" data-cat="beauty">
+            <div class="pc-thumb">🫧</div>
+            <div class="pc-category">Beauty</div>
+            <div class="pc-name">La Roche-Posay Toleriane Cleanser</div>
+            <div class="pc-brand">La Roche-Posay</div>
+            <div class="pc-ratings">
+              <span class="pc-rating-pill r-user">⭐ 4.4</span>
+              <span class="pc-rating-pill r-tox">☣️ 84</span>
+              <span class="pc-rating-pill r-match">🎯 89%</span>
+            </div>
+          </a>
+
+          <a href="product.html" class="product-card" data-name="seventh generation dish soap" data-cat="household">
+            <div class="pc-thumb">🧹</div>
+            <div class="pc-category">Household</div>
+            <div class="pc-name">Seventh Generation Dish Soap</div>
+            <div class="pc-brand">Seventh Generation</div>
+            <div class="pc-ratings">
+              <span class="pc-rating-pill r-user">⭐ 4.2</span>
+              <span class="pc-rating-pill r-tox">☣️ 87</span>
+              <span class="pc-rating-pill r-match">🎯 90%</span>
+            </div>
+          </a>
+
+          <a href="product.html" class="product-card" data-name="olly sleep melatonin gummies" data-cat="supplements">
+            <div class="pc-thumb">😴</div>
+            <div class="pc-category">Supplements</div>
+            <div class="pc-name">Olly Sleep Melatonin Gummies</div>
+            <div class="pc-brand">Olly</div>
+            <div class="pc-ratings">
+              <span class="pc-rating-pill r-user">⭐ 4.3</span>
+              <span class="pc-rating-pill r-tox med">☣️ 67</span>
+              <span class="pc-rating-pill r-match">🎯 80%</span>
+            </div>
+          </a>
+
+          <a href="product.html" class="product-card" data-name="maybelline fit me foundation" data-cat="beauty">
+            <div class="pc-thumb">💄</div>
+            <div class="pc-category">Beauty</div>
+            <div class="pc-name">Maybelline Fit Me Foundation</div>
+            <div class="pc-brand">Maybelline</div>
+            <div class="pc-ratings">
+              <span class="pc-rating-pill r-user">⭐ 4.1</span>
+              <span class="pc-rating-pill r-tox low">☣️ 38</span>
+              <span class="pc-rating-pill r-match">🎯 62%</span>
+            </div>
+          </a>
+
+          <a href="product.html" class="product-card" data-name="trader joes cauliflower gnocchi" data-cat="food">
+            <div class="pc-thumb">🥦</div>
+            <div class="pc-category">Food</div>
+            <div class="pc-name">TJ's Cauliflower Gnocchi</div>
+            <div class="pc-brand">Trader Joe's</div>
+            <div class="pc-ratings">
+              <span class="pc-rating-pill r-user">⭐ 4.5</span>
+              <span class="pc-rating-pill r-tox">☣️ 93</span>
+              <span class="pc-rating-pill r-match">🎯 96%</span>
+            </div>
+          </a>
+
+          <a href="product.html" class="product-card" data-name="vanicream moisturizing cream sensitive skin" data-cat="skincare">
+            <div class="pc-thumb">🌿</div>
+            <div class="pc-category">Skincare</div>
+            <div class="pc-name">Vanicream Moisturizing Cream</div>
+            <div class="pc-brand">Vanicream</div>
+            <div class="pc-ratings">
+              <span class="pc-rating-pill r-user">⭐ 4.6</span>
+              <span class="pc-rating-pill r-tox">☣️ 91</span>
+              <span class="pc-rating-pill r-match">🎯 94%</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">health<span>ly</span></div>
+    <p>A community that will eradicate the toxicity in our daily life.</p>
+    <p>© 2026 Healthly · Built with love at HOTH 13</p>
+  </footer>
+
+  <script>
+    let activeCategory = 'all';
+
+    // Range slider labels
+    document.getElementById('minTox').addEventListener('input', function() {
+      document.getElementById('minToxVal').textContent = this.value;
+    });
+    document.getElementById('minMatch').addEventListener('input', function() {
+      document.getElementById('minMatchVal').textContent = this.value;
+    });
+
+    function setCategory(btn, cat) {
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      activeCategory = cat;
+      filterProducts();
+    }
+
+    function filterProducts() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('.product-card');
+      let visible = 0;
+      cards.forEach(card => {
+        const name = card.dataset.name || '';
+        const cat  = card.dataset.cat  || '';
+        const matchSearch = name.includes(query);
+        const matchCat = activeCategory === 'all' || cat === activeCategory;
+        if (matchSearch && matchCat) {
+          card.style.display = '';
+          visible++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      document.getElementById('resultCount').textContent =
+        `Showing ${visible} result${visible !== 1 ? 's' : ''}`;
+    }
+  </script>
+</body>
+</html>

@@ -1,17 +1,443 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset = "UTF-8">
-    <meta http-equiv = "X UA-Compatible" context = "IE=edge">
-    <meta name= "viewport" content = "width=device-width, initial-scale =1.0">
-    <title>Healthly</title>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Healthly — Know What's In It</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── PAGE-SPECIFIC: LANDING ── */
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 6% 80px;
+      gap: 64px;
+    }
+    .hero-content { flex: 1; max-width: 600px; }
+    .hero-visual  { flex: 0 0 380px; }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 24px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 24px; height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.6rem, 6vw, 4.8rem);
+      font-weight: 900;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+      line-height: 1.0;
+    }
+    .hero h1 .accent { color: var(--primary); }
+    .hero h1 .accent-pink { color: var(--accent); }
+
+    .hero-tagline {
+      font-size: 1.05rem;
+      color: var(--muted-light);
+      margin-bottom: 36px;
+      max-width: 480px;
+      line-height: 1.7;
+    }
+
+    .hero-buttons { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    /* Scan Card (hero visual) */
+    .scan-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 0 60px rgba(0,229,160,0.07), var(--shadow);
+      animation: float 5s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-12px); }
+    }
+    .scan-card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .scan-icon {
+      width: 46px; height: 46px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--bg-elevated), #2d2d4e);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+    .scan-product-name { font-weight: 700; font-size: 0.95rem; }
+    .scan-product-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+    .ingredient-rows { display: flex; flex-direction: column; gap: 8px; }
+    .ingredient-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .ingredient-row.safe    { background: rgba(0,229,160,0.06);  border: 1px solid rgba(0,229,160,0.1); }
+    .ingredient-row.caution { background: rgba(255,184,0,0.06);  border: 1px solid rgba(255,184,0,0.1); }
+    .ingredient-row.avoid   { background: rgba(255,77,109,0.06); border: 1px solid rgba(255,77,109,0.1); }
+
+    .scan-score {
+      margin-top: 18px;
+      padding: 14px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-sm);
+    }
+    .scan-score-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--muted-light);
+    }
+    .scan-score-label span:last-child { color: var(--primary); font-weight: 800; }
+
+    /* Stats bar */
+    .stats-bar {
+      background: var(--bg-elevated);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 36px 6%;
+      display: flex;
+      justify-content: center;
+      gap: 64px;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 2.2rem; font-weight: 900; color: var(--primary); }
+    .stat-lbl { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+
+    /* Features */
+    #features { background: var(--bg); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0,229,160,0.2);
+    }
+    .feature-icon { font-size: 2rem; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+    .feature-card p  { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
+
+    /* How It Works */
+    #how-it-works { background: var(--bg-elevated); }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 32px;
+    }
+    .step { text-align: center; padding: 24px; }
+    .step-num {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: var(--primary-dim);
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      font-size: 1.2rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+    }
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+    .step p  { font-size: 0.88rem; color: var(--muted); }
+
+    /* Categories */
+    #categories { background: var(--bg); }
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .cat-card {
+      border-radius: var(--radius);
+      padding: 36px 28px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s;
+      border: 1px solid transparent;
+    }
+    .cat-card:hover { transform: scale(1.02); }
+    .cat-card.beauty       { background: linear-gradient(135deg, #1e1b4b, #312e81); border-color: rgba(129,140,248,0.2); }
+    .cat-card.food         { background: linear-gradient(135deg, #0d2e1a, #065f46); border-color: rgba(0,229,160,0.2); }
+    .cat-card.supplements  { background: linear-gradient(135deg, #2d1b3d, #5b21b6); border-color: rgba(167,139,250,0.2); }
+    .cat-card.household    { background: linear-gradient(135deg, #0c2340, #1e3a5f); border-color: rgba(56,189,248,0.2); }
+    .cat-emoji { font-size: 2.8rem; margin-bottom: 14px; display: block; }
+    .cat-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; }
+    .cat-card p  { font-size: 0.85rem; color: var(--muted-light); }
+
+    /* CTA */
+    #cta {
+      text-align: center;
+      padding: 100px 6%;
+      background: radial-gradient(ellipse at center, rgba(0,229,160,0.07) 0%, transparent 70%);
+      border-top: 1px solid var(--border);
+    }
+    #cta h2 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -1px; margin-bottom: 16px; }
+    #cta p  { font-size: 1rem; color: var(--muted); margin-bottom: 36px; }
+
+    /* Footer */
+    footer {
+      background: var(--bg-elevated);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 36px 6%;
+    }
+    footer .footer-logo { font-size: 1.3rem; font-weight: 900; margin-bottom: 8px; }
+    footer .footer-logo span { color: var(--primary); }
+    footer p { font-size: 0.82rem; color: var(--muted); }
+    footer p + p { margin-top: 6px; }
+
+    @media (max-width: 900px) {
+      .hero { flex-direction: column; text-align: center; padding-top: 100px; }
+      .hero-visual { width: 100%; max-width: 380px; margin: 0 auto; }
+      .hero-buttons { justify-content: center; }
+    }
+  </style>
 </head>
 <body>
-    <h1>HEALTHLY</h1>
+
+  <!-- ── NAV ── -->
+  <nav class="nav">
+    <div class="nav-logo">health<span>ly</span></div>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#categories">Scan</a></li>
+      <li><a href="search.html" class="btn-primary" style="padding:10px 22px;font-size:0.85rem">Start Scanning</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">Ingredient Intelligence</div>
+      <h1>Know what's<br><span class="accent">actually</span> in<br>your <span class="accent-pink">products.</span></h1>
+      <p class="hero-tagline">A community that will eradicate the toxicity in our daily life — one scan at a time.</p>
+      <div class="hero-buttons">
+        <a href="search.html" class="btn-primary">🔍 Scan a Product</a>
+        <a href="#how-it-works" class="btn-ghost">See How It Works →</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="scan-card">
+        <div class="scan-card-header">
+          <div class="scan-icon">🧴</div>
+          <div>
+            <div class="scan-product-name">CeraVe Moisturizer</div>
+            <div class="scan-product-meta">Skincare · 14 ingredients</div>
+          </div>
+        </div>
+        <div class="ingredient-rows">
+          <div class="ingredient-row safe">
+            <span>Ceramide NP</span>
+            <span class="tag tag-safe">Safe</span>
+          </div>
+          <div class="ingredient-row safe">
+            <span>Hyaluronic Acid</span>
+            <span class="tag tag-safe">Safe</span>
+          </div>
+          <div class="ingredient-row caution">
+            <span>Cetearyl Alcohol</span>
+            <span class="tag tag-caution">Caution</span>
+          </div>
+          <div class="ingredient-row avoid">
+            <span>Methylparaben</span>
+            <span class="tag tag-avoid">Avoid</span>
+          </div>
+        </div>
+        <div class="scan-score">
+          <div class="scan-score-label">
+            <span>Toxicity Score</span>
+            <span>72 / 100</span>
+          </div>
+          <div class="score-track">
+            <div class="score-fill medium" style="width:72%"></div>
+          </div>
+        </div>
+        <div class="triple-rating" style="margin-top:16px">
+          <div class="rating-pill r-user"><span class="r-icon">⭐</span> 4.1</div>
+          <div class="rating-pill r-tox med"><span class="r-icon">☣️</span> 72</div>
+          <div class="rating-pill r-match"><span class="r-icon">🎯</span> 88%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STATS ── -->
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-num">12,000+</div>
+      <div class="stat-lbl">Ingredients Tracked</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">500+</div>
+      <div class="stat-lbl">Flagged Chemicals</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">98%</div>
+      <div class="stat-lbl">Scan Accuracy</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Free</div>
+      <div class="stat-lbl">Always & Forever</div>
+    </div>
+  </div>
+
+  <!-- ── FEATURES ── -->
+  <section id="features">
+    <div class="container">
+      <div class="section-label">Features</div>
+      <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:12px;letter-spacing:-1px">Everything you need to shop smarter</h2>
+      <p style="color:var(--muted);font-size:1rem;margin-bottom:48px;max-width:520px">From your morning moisturizer to your afternoon snack — every label covered.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📷</div>
+          <h3>Barcode &amp; Label Scanner</h3>
+          <p>Point your camera at any product barcode or ingredient label and get an instant full breakdown.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚗️</div>
+          <h3>Professional Toxicity Ratings</h3>
+          <p>Expert-assessed scores flag over 500 harmful chemicals including parabens, sulfates, and phthalates.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>Personalized Profile Match</h3>
+          <p>Input your health concerns, skin type, allergies, and dietary needs — every product is scored just for you.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌿</div>
+          <h3>Cleaner Alternatives</h3>
+          <p>When we find something sketchy, we suggest healthier swaps you'll actually want to buy.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⭐</div>
+          <h3>Verified Community Reviews</h3>
+          <p>Real ratings from verified purchasers plus professional reviews authenticated by AI certification checks.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔖</div>
+          <h3>Track &amp; Follow Up</h3>
+          <p>Save your safe list and get 3-month check-ins to see how recommended products are working for you.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ── -->
+  <section id="how-it-works">
+    <div class="container">
+      <div class="section-label">How It Works</div>
+      <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:12px;letter-spacing:-1px">Three steps to a cleaner life</h2>
+      <p style="color:var(--muted);font-size:1rem;margin-bottom:48px;max-width:520px">No chemistry degree required.</p>
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Scan the Product</h3>
+          <p>Use your camera to scan a barcode or photograph any ingredient label.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>We Analyze It</h3>
+          <p>Our database cross-references every ingredient against thousands of scientific studies and safety reports.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Get Your Results</h3>
+          <p>See the full breakdown, triple rating, red flags, and cleaner alternatives — instantly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CATEGORIES ── -->
+  <section id="categories">
+    <div class="container">
+      <div class="section-label">What We Scan</div>
+      <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:12px;letter-spacing:-1px">Every aisle, every label</h2>
+      <p style="color:var(--muted);font-size:1rem;margin-bottom:48px;max-width:520px">Healthly covers the products you use every single day.</p>
+      <div class="categories-grid">
+        <div class="cat-card beauty">
+          <span class="cat-emoji">💄</span>
+          <h3>Beauty &amp; Skincare</h3>
+          <p>Moisturizers, serums, makeup, sunscreen, and more.</p>
+        </div>
+        <div class="cat-card food">
+          <span class="cat-emoji">🥗</span>
+          <h3>Food &amp; Drinks</h3>
+          <p>Snacks, packaged meals, sauces, beverages, and additives.</p>
+        </div>
+        <div class="cat-card supplements">
+          <span class="cat-emoji">💊</span>
+          <h3>Supplements</h3>
+          <p>Vitamins, protein powders, pre-workouts, and herbal blends.</p>
+        </div>
+        <div class="cat-card household">
+          <span class="cat-emoji">🧹</span>
+          <h3>Household</h3>
+          <p>Cleaning sprays, detergents, air fresheners, and personal care.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <section id="cta">
+    <div class="section-label">Get Started</div>
+    <h2>Your body deserves better.</h2>
+    <p>Join the community eradicating toxicity from daily life — one scan at a time.</p>
+    <a href="search.html" class="btn-primary" style="font-size:1rem;padding:16px 44px">🌿 Start for Free</a>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-logo">health<span>ly</span></div>
     <p>A community that will eradicate the toxicity in our daily life.</p>
-    <button> </button>
-
-
+    <p>© 2026 Healthly · Built with love at HOTH 13</p>
+  </footer>
 
 </body>
 </html>
