@@ -109,8 +109,206 @@ Each product displays three distinct ratings:
 - [ ] Add `transition` to `.product-card` for smooth animation
 - [ ] After Evelyn leaves: take over her checkbox/radio styling if unfinished
 
+---
 
-demo: scanning hackathon food
--We going to remove the search button and replace it with a search bar
-scanning hackathon food
-account should have history of searches & profile
+## Pages
+
+| File             | URL / Purpose |
+|------------------|---------------|
+| `healthly.html`  | Landing page — hero scan card, features carousel, reviews, stats |
+| `search.html`    | Product search results — accepts `?q=` and `?dupes=1` query params |
+| `product.html`   | Individual product detail — ingredient breakdown, ratings |
+| `profile.html`   | User health profile — dietary prefs, allergies, skin type, conditions, scan history |
+| `about.html`     | Business model — triple rating system, how Healthly works |
+
+### Shared Modules
+| File       | Purpose |
+|------------|---------|
+| `auth.js`  | Auth modal (Log in / Create account), nav state (Sign in ↔ Profile), scan history |
+| `style.css`| Design tokens, shared nav, buttons, cards, footer |
+| `app.py`   | Flask backend — search, product detail, auth, profile endpoints |
+
+---
+
+## Current Mock Products (available when API is offline)
+
+| ID              | Name                                    | Category |
+|-----------------|-----------------------------------------|----------|
+| `737628064502`  | Kind Dark Chocolate Nuts & Sea Salt Bar | food     |
+| `011110038364`  | Honey Nut Cheerios                      | food     |
+| `granola001`    | Nature Valley Oats 'n Honey Granola Bar | food     |
+| `beauty001`     | CeraVe Moisturizing Cream               | beauty   |
+
+Live product data comes from [Open Food Facts](https://world.openfoodfacts.org) and [Open Beauty Facts](https://world.openbeautyfacts.org) APIs.
+
+---
+
+## Roadmap
+
+### v1 — HOTH 13 MVP (current)
+- [x] Landing hero with scan card (text search + image upload + live camera)
+- [x] Product search via Open Food Facts / Open Beauty Facts (with mock fallback)
+- [x] Individual product pages with ingredient list
+- [x] Auth modal — Log in / Create account, localStorage persistence
+- [x] User health profile — dietary, allergies, skin type, conditions
+- [x] Scan history shown on landing page (logged-in users only)
+- [x] Flask backend — mock auth, profile storage, external API proxy
+- [x] Barcode scanning via BarcodeDetector API (camera + file upload)
+- [x] "Find dupes" toggle on search
+
+### v2 — Post-Hackathon
+- [ ] Real password hashing (bcrypt) + JWT tokens — replace mock auth
+- [ ] Password reset / forgot password email flow
+- [ ] Persistent database (SQLite or Postgres) — users, profiles, scan history
+- [ ] AI-powered ingredient flagging via Claude API (flag harmful chemicals against user profile)
+- [ ] Toxicity score algorithm (weighted by ingredient risk level + user sensitivities)
+- [ ] Community product ratings stored and averaged in DB
+- [ ] "Find dupes" — surface cheaper alternatives with similar or better ingredient profiles
+- [ ] Wikipedia links on ingredient detail rows
+
+### v3 — Growth
+- [ ] Progressive Web App (PWA) — installable, offline-capable
+- [ ] Mobile camera scanning on all browsers (zxing-js fallback for Firefox/Safari)
+- [ ] Community reviews and professional reviewer certification (AI image verification)
+- [ ] 3-month follow-up surveys after product recommendations
+- [ ] Affiliate link integration for verified purchases
+- [ ] Brand partnership API for verified product data
+- [ ] Browser extension for in-store and online shopping integration
+- [ ] Subscription tier — advanced toxicity reports, trend alerts, priority scan
+
+---
+
+## Running Locally
+
+```bash
+# Install Python dependencies
+pip install flask flask-cors requests
+
+# Start backend
+python app.py
+# → http://localhost:5001
+
+# Frontend — open healthly.html directly in browser
+# (no build step needed)
+```
+
+> **Note:** Camera barcode scanning requires HTTPS in production. On `localhost` it works without HTTPS.
+> **Note:** `BarcodeDetector` API is Chromium-only (Chrome, Edge). File upload fallback works everywhere.
+
+---
+
+Next prompt 2pm:
+
+You have access to this project’s files. Implement the TODO below with minimal, clean changes. Keep styles consistent with existing design tokens in style.css. Do not introduce frameworks. 
+
+Goal: Distinguish “quick scan/search” on landing page (no account) from “personalized account”. The top-right header button must be “Sign in” when logged out, and “Profile” (or an avatar + Profile) when logged in.
+
+TODO Implementation:
+
+1) Header auth entry point
+- Update the shared nav header across pages so the upper-right button says “Sign in” (logged out).
+- Clicking “Sign in” opens a popup modal with:
+  - Tabs or two clear options: “Log in” and “Create account”
+  - Email + password fields for both flows
+  - Primary button: “Log in” or “Create account”
+- If user is logged in, replace “Sign in” with “Profile” (or avatar + Profile) that links to profile.html.
+- Persist login state in localStorage (ok for hackathon). Store at least: auth_token (mock ok), user_email, and optionally user_profile.
+- Provide a “Log out” action in profile.html or in the modal when logged in (simple is fine).
+
+2) Account creation and profile storage
+- Creating an account should store user email and password (hackathon-level mock acceptable, but do NOT store plaintext password in localStorage; store only a mock token locally).
+- On successful create or login:
+  - Close modal
+  - Update header state immediately
+- Use profile.html form fields as “preferences”.
+- Wire profile.html “Save” to POST preferences to backend endpoint /profile.
+- On successful save, cache preferences in localStorage too (so UI can use it even if backend is mocked).
+
+3) Landing page: move search into healthly.html
+- Remove the banner “Search” button/link from the header nav (but keep Search as a nav page link if it already exists and is useful).
+- Add a prominent search bar to healthly.html similar to the one in search.html:
+  - Search by product name, brand, or ingredient
+  - A submit action should navigate to search.html with the query in the URL (example: search.html?q=cerave)
+- Add a “Scan barcode / Upload” button next to the search bar:
+  - When clicked, attempt to open the device camera and scan a barcode (BarcodeDetector first).
+  - If BarcodeDetector is not supported, fall back to file upload input (accept image).
+  - For this iteration, it is OK if scan is stubbed and just logs decoded barcode, but implement the UI and plumbing.
+
+4) Search history in landing page
+- On healthly.html, show a small “Recent scans” or “History” section if logged in.
+- If logged out, hide that section entirely (do not show an empty placeholder).
+- History source: localStorage list (append items when a search is run or barcode decoded).
+- Each history item should be clickable and take the user back to search.html or product.html with relevant params.
+
+5) Backend
+- Edit app.py (Flask) with CORS enabled.
+- Keep it simple and hackathon-ready. No database required.
+- Ensure requirements.txt contains needed packages (flask, flask-cors, requests already present).
+
+Acceptance criteria:
+- “Sign in” button exists in top-right nav and opens modal on all pages.
+- Create account/login updates UI state without refresh.
+- Logged-in state shows “Profile” and enables History section on healthly.html.
+- Landing page has search bar + scan/upload button.
+- Searching from landing page routes to search.html with query prefilled.
+- Profile save posts to backend and caches locally.
+
+Make sure all pages still load with no console errors. Keep CSS changes minimal and consistent with style.css tokens.
+
+Here's a full pre-push test checklist based on everything built so far:
+
+landing:
+- add camera icon button to open camera for barcode scanning. requests for webcam access and works
+
+- move recent scans up, right below search bar
+
+- no password verification. how to enable?
+
+- provide an md with all the pages/current products available and a roadmap of the website 
+
+
+Auth flow
+ Open healthly.html — nav shows "Sign in" (green)
+ Click "Sign in" → modal opens with Log in / Create account tabs
+ Create account: bad email → error message shows. Password < 6 chars → error. Passwords don't match → error
+ Create account: valid email + matching 6+ char passwords → modal closes, nav shows "Profile"
+ Refresh page → still shows "Profile" (localStorage persisted)
+ Log in tab: enter same email, any password → logs in
+ Navigate to about.html, search.html, profile.html — all show "Profile" in nav when logged in
+ Go to profile.html → click Log out → redirects to healthly.html, nav shows "Sign in" again
+Landing page search card
+ Scan card shows textarea with placeholder "Paste ingredients or search"
+ Type something → press Enter → navigates to search.html?q=...
+ Shift+Enter inserts a newline instead of submitting
+ Find dupes toggle clicks and visually toggles (green when on)
+ With dupes on → URL includes &dupes=1
+ Click Image button → file picker opens (or camera modal in Chrome/Edge)
+ Upload a barcode image → either detects and navigates, or shows "No barcode detected" alert
+Search page
+ Navigate directly to search.html?q=cerave → input pre-filled, results filtered to CeraVe
+ search.html?q=kind → KIND bar shows
+ Empty query (search.html) → all 12 products visible
+History
+ While logged out on healthly.html → no "Recent Scans" section visible
+ Log in, do a search from the landing page → go back to healthly.html → "Recent Scans" section appears with a chip
+ Chip is clickable and goes back to the search
+ On profile.html while logged in → Recent Searches card appears at top of form
+ If no history yet → shows "No searches yet" message
+Profile save
+Without backend (file://):
+
+ Check some boxes → click Save Profile → → shows "Saved locally (backend offline)"
+ Refresh → checkboxes restore from localStorage
+With backend running (python app.py):
+
+ Same save → shows "Profile saved!" in green
+ Open DevTools Network tab → confirm POST to localhost:5001/profile returned 200
+Console errors
+ Open DevTools (F12) on each page — zero red errors in console
+ healthly.html, search.html, profile.html, about.html — all load clean
+Quick console reset between tests
+
+localStorage.clear(); location.reload();
+
+Next:
+no more icons use images of item from internet

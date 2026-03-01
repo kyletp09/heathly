@@ -240,7 +240,7 @@
       <li><a href="healthly.html">Home</a></li>
       <li><a href="search.html" style="color:var(--primary)">Search</a></li>
       <li><a href="about.html">About</a></li>
-      <li><a href="search.html" class="btn-primary" style="padding:10px 22px;font-size:0.85rem">Start Scanning</a></li>
+      <li><a id="nav-auth-btn" href="#" class="btn-primary" style="padding:10px 22px;font-size:0.85rem">Sign in</a></li>
     </ul>
   </nav>
 
@@ -483,43 +483,49 @@
     <p>© 2026 Healthly · Built with love at HOTH 13</p>
   </footer>
 
+  <script src="auth.js"></script>
   <script>
-    let activeCategory = 'all';
+    var activeCategory = 'all';
 
-    // Range slider labels
-    document.getElementById('minTox').addEventListener('input', function() {
+    document.getElementById('minTox').addEventListener('input', function () {
       document.getElementById('minToxVal').textContent = this.value;
     });
-    document.getElementById('minMatch').addEventListener('input', function() {
+    document.getElementById('minMatch').addEventListener('input', function () {
       document.getElementById('minMatchVal').textContent = this.value;
     });
 
     function setCategory(btn, cat) {
-      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.pill').forEach(function (p) { p.classList.remove('active'); });
       btn.classList.add('active');
       activeCategory = cat;
       filterProducts();
     }
 
     function filterProducts() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      const cards = document.querySelectorAll('.product-card');
-      let visible = 0;
-      cards.forEach(card => {
-        const name = card.dataset.name || '';
-        const cat  = card.dataset.cat  || '';
-        const matchSearch = name.includes(query);
-        const matchCat = activeCategory === 'all' || cat === activeCategory;
-        if (matchSearch && matchCat) {
-          card.style.display = '';
-          visible++;
-        } else {
-          card.style.display = 'none';
-        }
+      var query = document.getElementById('searchInput').value.toLowerCase();
+      var cards = document.querySelectorAll('.product-card');
+      var visible = 0;
+      cards.forEach(function (card) {
+        var name = card.dataset.name || '';
+        var cat  = card.dataset.cat  || '';
+        var matchSearch = name.includes(query);
+        var matchCat    = activeCategory === 'all' || cat === activeCategory;
+        if (matchSearch && matchCat) { card.style.display = ''; visible++; }
+        else { card.style.display = 'none'; }
       });
       document.getElementById('resultCount').textContent =
-        `Showing ${visible} result${visible !== 1 ? 's' : ''}`;
+        'Showing ' + visible + ' result' + (visible !== 1 ? 's' : '');
     }
+
+    /* ── Pre-fill from URL ?q= ── */
+    document.addEventListener('DOMContentLoaded', function () {
+      var params = new URLSearchParams(window.location.search);
+      var q = params.get('q');
+      if (q) {
+        document.getElementById('searchInput').value = q;
+        filterProducts();
+      }
+    });
   </script>
 </body>
 </html>

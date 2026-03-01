@@ -2,12 +2,14 @@ import uuid
 import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 CORS(app)
 
-# In-memory profile store (fine for hackathon)
+# In-memory stores (fine for hackathon)
 profiles = {}
+users = {}  # email -> hashed token (mock)
 
 # ─── Mock Data (fallback when external APIs are unavailable) ───────────────────
 
@@ -177,6 +179,54 @@ def product(product_id):
         if mock:
             return jsonify({**mock, "nutrition": {}, "source": "mock"})
         return jsonify({"error": "Product not found"}), 404
+
+
+# ─── Auth ─────────────────────────────────────────────────────────────────────
+# users dict: email -> {hash, token}
+
+@app.route("/auth/register", methods=["POST"])
+def auth_register():
+    body = request.get_json(silent=True) or {}
+    email    = (body.get("email") or "").strip().lower()
+    password = body.get("password") or ""
+    if not email or "@" not in email:
+        return jsonify({"error": "Invalid email"}), 400
+    if len(password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters"}), 400
+    if email in users:
+        return jsonify({"error": "Email already registered"}), 409
+    token = str(uuid.uuid4())
+    users[email] = {"hash": generate_password_hash(password), "token": token}
+    return jsonify({"token": token, "email": email})
+
+
+@app.route("/auth/login", methods=["POST"])
+def auth_login():
+    body = request.get_json(silent=True) or {}
+    email    = (body.get("email") or "").strip().lower()
+    password = body.get("password") or ""
+    if not email or "@" not in email:
+        return jsonify({"error": "Invalid email"}), 400
+    if email not in users:
+        return jsonify({"error": "No account found with that email"}), 401
+    if not check_password_hash(users[email]["hash"], password):
+        return jsonify({"error": "Incorrect password"}), 401
+    return jsonify({"token": users[email]["token"], "email": email})
+
+
+@app.route("/auth/reset-password", methods=["POST"])
+def auth_reset_password():
+    body         = request.get_json(silent=True) or {}
+    email        = (body.get("email") or "").strip().lower()
+    new_password = body.get("new_password") or ""
+    if not email or "@" not in email:
+        return jsonify({"error": "Invalid email"}), 400
+    if email not in users:
+        return jsonify({"error": "No account found with that email"}), 404
+    if len(new_password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters"}), 400
+    users[email]["hash"] = generate_password_hash(new_password)
+    return jsonify({"message": "Password reset successfully"})
 
 
 # ─── Profile ───────────────────────────────────────────────────────────────────

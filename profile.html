@@ -125,8 +125,60 @@
     .save-row {
       margin-top: 28px;
       display: flex;
-      justify-content: flex-end;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
+    .save-feedback {
+      font-size: 0.85rem;
+      color: var(--primary);
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .save-feedback.show { opacity: 1; }
+
+    /* Profile header row */
+    .page-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .profile-email-tag {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* History chips */
+    .history-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .history-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      font-size: 0.83rem;
+      color: var(--text);
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .history-chip:hover { border-color: var(--primary); background: var(--primary-dim); }
+    .history-empty { font-size: 0.85rem; color: var(--muted); }
+
+    /* Checked states */
+    .checkbox-label { transition: border-color 0.2s, background 0.2s; }
+    .checkbox-label:has(input:checked) {
+      border-color: var(--primary);
+      background: var(--primary-dim);
+    }
+    .text-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(29,185,84,0.12); outline: none; }
+    .radio-label { transition: border-color 0.2s, background 0.2s; }
+    .radio-label:has(input:checked) { border-color: var(--primary); background: var(--primary-dim); }
 
   </style>
 </head>
@@ -139,17 +191,29 @@
       <li><a href="healthly.html">Home</a></li>
       <li><a href="search.html">Search</a></li>
       <li><a href="about.html">About</a></li>
-      <li><a href="search.html" class="btn-primary" style="padding:10px 22px;font-size:0.85rem">Start Scanning</a></li>
+      <li><a id="nav-auth-btn" href="#" class="btn-primary" style="padding:10px 22px;font-size:0.85rem">Sign in</a></li>
     </ul>
   </nav>
 
   <div class="page-wrap">
 
     <!-- Page Header -->
-    <div class="page-header">
-      <div class="section-label">Your Profile</div>
-      <h1>Health Profile</h1>
-      <p>Tell us about yourself so every product scan is personalized to <em>you</em>.</p>
+    <div class="page-header-row">
+      <div>
+        <div class="section-label">Your Profile</div>
+        <h1>Health Profile</h1>
+        <p class="profile-email-tag" id="profile-email-display"></p>
+      </div>
+      <button id="logout-btn" class="btn-ghost" style="flex-shrink:0;font-size:0.85rem;padding:10px 20px;margin-top:8px">Log out</button>
+    </div>
+
+    <!-- ── RECENT SEARCHES ── -->
+    <div class="form-section" id="profile-history-wrap" style="display:none">
+      <div class="form-section-title">
+        <span class="section-icon">🕐</span>
+        Recent Searches
+      </div>
+      <div id="profile-history-list" class="history-chips"></div>
     </div>
 
     <!-- ── SECTION 1: DIETARY RESTRICTIONS ── -->
@@ -335,8 +399,8 @@
     </div>
 
     <!-- Save Button -->
-    <!-- TODO (Evelyn): Make this button look like the .btn-primary from style.css -->
     <div class="save-row">
+      <span class="save-feedback" id="save-feedback"></span>
       <button class="btn-primary" id="save-btn">Save Profile →</button>
     </div>
 
@@ -348,5 +412,111 @@
     <p>© 2026 Healthly · Built with love at HOTH 13</p>
   </footer>
 
+  <script src="auth.js"></script>
+  <script>
+    /* ── Show email, guard page ── */
+    document.addEventListener('DOMContentLoaded', function () {
+      var user = HLAuth.getUser();
+      if (user) {
+        document.getElementById('profile-email-display').textContent = user.email;
+      } else {
+        document.getElementById('profile-email-display').textContent = 'Not signed in — preferences saved locally.';
+      }
+
+      /* Restore saved prefs from localStorage */
+      var stored = null;
+      try { stored = JSON.parse(localStorage.getItem('hl_prefs')); } catch (e) {}
+      if (stored) restorePrefs(stored);
+
+      renderProfileHistory();
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', function () {
+      HLAuth.logout();
+    });
+
+    /* ── Search history ── */
+    function escHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function renderProfileHistory() {
+      var wrap = document.getElementById('profile-history-wrap');
+      var list = document.getElementById('profile-history-list');
+      if (!HLAuth.isLoggedIn() || !wrap) return;
+      var hist = HLAuth.getHistory();
+      if (!hist.length) {
+        wrap.style.display = '';
+        list.innerHTML = '<span class="history-empty">No searches yet — try scanning a product.</span>';
+        return;
+      }
+      wrap.style.display = '';
+      list.innerHTML = hist.map(function (h) {
+        return '<a href="' + escHtml(h.url) + '" class="history-chip">🔍 ' + escHtml(h.label) + '</a>';
+      }).join('');
+    }
+
+    /* ── Save profile ── */
+    document.getElementById('save-btn').addEventListener('click', async function () {
+      var prefs = {
+        dietary:       vals('[name="diet"]:checked'),
+        allergies:     vals('[name="allergy"]:checked'),
+        skin_type:     (document.querySelector('[name="skin"]:checked') || {}).value || '',
+        skin_concerns: vals('[name="skin-concern"]:checked'),
+        conditions:    vals('[name="condition"]:checked'),
+        other_allergies: document.querySelector('.text-input').value.trim()
+      };
+
+      /* Cache locally first */
+      localStorage.setItem('hl_prefs', JSON.stringify(prefs));
+
+      /* POST to backend */
+      var profileId = HLAuth.getProfileId();
+      try {
+        var resp = await fetch('http://localhost:5001/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.assign({ profile_id: profileId }, prefs))
+        });
+        if (resp.ok) {
+          var data = await resp.json();
+          HLAuth.setProfileId(data.profile_id);
+          showFeedback('Profile saved!');
+        } else {
+          showFeedback('Saved locally');
+        }
+      } catch (e) {
+        showFeedback('Saved locally (backend offline)');
+      }
+    });
+
+    function vals(selector) {
+      return Array.from(document.querySelectorAll(selector)).map(function (el) { return el.value; });
+    }
+
+    function showFeedback(msg) {
+      var el = document.getElementById('save-feedback');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(function () { el.classList.remove('show'); }, 3000);
+    }
+
+    function restorePrefs(p) {
+      if (p.dietary)       p.dietary.forEach(function (v) { check('[name="diet"][value="' + v + '"]'); });
+      if (p.allergies)     p.allergies.forEach(function (v) { check('[name="allergy"][value="' + v + '"]'); });
+      if (p.skin_type)     check('[name="skin"][value="' + p.skin_type + '"]');
+      if (p.skin_concerns) p.skin_concerns.forEach(function (v) { check('[name="skin-concern"][value="' + v + '"]'); });
+      if (p.conditions)    p.conditions.forEach(function (v) { check('[name="condition"][value="' + v + '"]'); });
+      if (p.other_allergies) {
+        var el = document.querySelector('.text-input');
+        if (el) el.value = p.other_allergies;
+      }
+    }
+
+    function check(sel) {
+      var el = document.querySelector(sel);
+      if (el) el.checked = true;
+    }
+  </script>
 </body>
 </html>
