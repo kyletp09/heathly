@@ -32,6 +32,7 @@
 html { scroll-behavior: smooth; }
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
@@ -42,7 +43,8 @@ a { text-decoration: none; color: inherit; }
 button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
 
 /* ── TYPOGRAPHY ── */
-h1, h2, h3, h4 { line-height: 1.1; letter-spacing: -0.5px; }
+h1, h2      { font-family: 'Playfair Display', Georgia, serif; font-weight: 600; line-height: 1.1; letter-spacing: -0.5px; }
+h3, h4      { font-family: 'Playfair Display', Georgia, serif; font-weight: 500; line-height: 1.1; letter-spacing: -0.5px; }
 
 /* ── LAYOUT ── */
 .container { max-width: 1160px; margin: 0 auto; padding: 0 6%; }
@@ -55,7 +57,7 @@ section { padding: 96px 6%; }
   gap: 8px;
   background: var(--primary);
   color: #000000;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 0.95rem;
   padding: 14px 32px;
   border-radius: var(--radius-pill);
@@ -70,7 +72,7 @@ section { padding: 96px 6%; }
   gap: 8px;
   background: transparent;
   color: var(--text);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.95rem;
   padding: 13px 32px;
   border-radius: var(--radius-pill);
@@ -96,7 +98,7 @@ section { padding: 96px 6%; }
   align-items: center;
   gap: 6px;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: 1.2px;
   text-transform: uppercase;
   padding: 5px 12px;
@@ -117,7 +119,7 @@ section { padding: 96px 6%; }
 .tag {
   display: inline-block;
   font-size: 0.68rem;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: 0.8px;
   text-transform: uppercase;
   padding: 3px 10px;
@@ -141,7 +143,7 @@ section { padding: 96px 6%; }
   padding: 5px 12px;
   border-radius: var(--radius-pill);
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 400;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
 }
@@ -166,8 +168,9 @@ section { padding: 96px 6%; }
   border-bottom: 1px solid var(--border);
 }
 .nav-logo {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
   font-size: 1.45rem;
-  font-weight: 900;
   letter-spacing: -0.5px;
   color: var(--text);
 }
@@ -191,7 +194,7 @@ section { padding: 96px 6%; }
 .section-label {
   display: inline-block;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--primary);

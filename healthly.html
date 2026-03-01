@@ -5,6 +5,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Healthly — Know What's In It</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap" />
   <link rel="stylesheet" href="style.css" />
   <style>
     /* ── PAGE-SPECIFIC: LANDING ── */
@@ -25,7 +28,7 @@
       align-items: center;
       gap: 8px;
       font-size: 0.78rem;
-      font-weight: 700;
+      font-weight: 400;
       letter-spacing: 1.5px;
       text-transform: uppercase;
       color: var(--primary);
@@ -41,7 +44,7 @@
 
     .hero h1 {
       font-size: clamp(2.6rem, 6vw, 4.8rem);
-      font-weight: 900;
+      font-weight: 600;
       letter-spacing: -2px;
       margin-bottom: 20px;
       line-height: 1.0;
@@ -88,7 +91,7 @@
       justify-content: center;
       font-size: 1.3rem;
     }
-    .scan-product-name { font-weight: 700; font-size: 0.95rem; }
+    .scan-product-name { font-weight: 500; font-size: 0.95rem; }
     .scan-product-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
 
     .ingredient-rows { display: flex; flex-direction: column; gap: 8px; }
@@ -115,11 +118,11 @@
       display: flex;
       justify-content: space-between;
       font-size: 0.78rem;
-      font-weight: 600;
+      font-weight: 400;
       margin-bottom: 8px;
       color: var(--muted-light);
     }
-    .scan-score-label span:last-child { color: var(--primary); font-weight: 800; }
+    .scan-score-label span:last-child { color: var(--primary); font-weight: 500; }
 
     /* Stats bar */
     .stats-bar {
@@ -133,7 +136,7 @@
       flex-wrap: wrap;
     }
     .stat { text-align: center; }
-    .stat-num { font-size: 2.2rem; font-weight: 900; color: var(--primary); }
+    .stat-num { font-size: 2.2rem; font-weight: 600; color: var(--primary); }
     .stat-lbl { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
 
     /* Features */
@@ -155,7 +158,7 @@
       border-color: rgba(0,229,160,0.2);
     }
     .feature-icon { font-size: 2rem; margin-bottom: 16px; }
-    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+    .feature-card h3 { font-size: 1rem; font-weight: 500; margin-bottom: 10px; }
     .feature-card p  { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
 
     /* How It Works */
@@ -173,13 +176,13 @@
       border: 2px solid var(--primary);
       color: var(--primary);
       font-size: 1.2rem;
-      font-weight: 900;
+      font-weight: 600;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 18px;
     }
-    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+    .step h3 { font-size: 1rem; font-weight: 500; margin-bottom: 10px; }
     .step p  { font-size: 0.88rem; color: var(--muted); }
 
     /* Categories */
@@ -204,7 +207,7 @@
     .cat-card.supplements  { background: linear-gradient(135deg, #f3e8ff, #ddd6fe); border-color: rgba(167,139,250,0.45); }
     .cat-card.household    { background: linear-gradient(135deg, #e0f2fe, #bae6fd); border-color: rgba(56,189,248,0.45); }
     .cat-emoji { font-size: 2.8rem; margin-bottom: 14px; display: block; }
-    .cat-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; }
+    .cat-card h3 { font-size: 1.2rem; font-weight: 500; margin-bottom: 6px; }
     .cat-card p  { font-size: 0.85rem; color: var(--muted); }
 
     /* CTA */
@@ -214,7 +217,7 @@
       background: radial-gradient(ellipse at center, rgba(0,229,160,0.07) 0%, transparent 70%);
       border-top: 1px solid var(--border);
     }
-    #cta h2 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -1px; margin-bottom: 16px; }
+    #cta h2 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 600; letter-spacing: -1px; margin-bottom: 16px; }
     #cta p  { font-size: 1rem; color: var(--muted); margin-bottom: 36px; }
 
     /* Footer */
@@ -224,7 +227,7 @@
       text-align: center;
       padding: 36px 6%;
     }
-    footer .footer-logo { font-size: 1.3rem; font-weight: 900; margin-bottom: 8px; }
+    footer .footer-logo { font-family: 'Playfair Display', Georgia, serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 8px; }
     footer .footer-logo span { color: var(--primary); }
     footer p { font-size: 0.82rem; color: var(--muted); }
     footer p + p { margin-top: 6px; }
@@ -330,7 +333,7 @@
   <section id="features">
     <div class="container">
       <div class="section-label">Features</div>
-      <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:12px;letter-spacing:-1px">Everything you need to shop smarter</h2>
+      <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:600;margin-bottom:12px;letter-spacing:-1px">Everything you need to shop smarter</h2>
       <p style="color:var(--muted);font-size:1rem;margin-bottom:48px;max-width:520px">From your morning moisturizer to your afternoon snack — every label covered.</p>
       <div class="features-grid">
         <div class="feature-card">
@@ -371,7 +374,7 @@
   <section id="how-it-works">
     <div class="container">
       <div class="section-label">How It Works</div>
-      <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:12px;letter-spacing:-1px">Three steps to a cleaner life</h2>
+      <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:600;margin-bottom:12px;letter-spacing:-1px">Three steps to a cleaner life</h2>
       <p style="color:var(--muted);font-size:1rem;margin-bottom:48px;max-width:520px">No chemistry degree required.</p>
       <div class="steps-grid">
         <div class="step">
@@ -397,7 +400,7 @@
   <section id="categories">
     <div class="container">
       <div class="section-label">What We Scan</div>
-      <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:12px;letter-spacing:-1px">Every aisle, every label</h2>
+      <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:600;margin-bottom:12px;letter-spacing:-1px">Every aisle, every label</h2>
       <p style="color:var(--muted);font-size:1rem;margin-bottom:48px;max-width:520px">Healthly covers the products you use every single day.</p>
       <div class="categories-grid">
         <div class="cat-card beauty">
