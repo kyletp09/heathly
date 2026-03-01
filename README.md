@@ -12,6 +12,12 @@ Healthly is a consumable ingredient rating platform that lets users scan or sear
 
 ## Core Features
 
+### Barcode & Camera Scanning
+- Point your camera at any product barcode for an instant lookup
+- Uses the browser's `BarcodeDetector` API (or a JS library fallback) via `getUserMedia`
+- Decoded barcode → passed directly to the `/product/<id>` backend endpoint
+- Works on mobile and desktop (any device with a camera)
+
 ### Ingredient Analysis
 - Breaks down every ingredient in a product
 - Covers all consumable categories: food, beauty, skincare, supplements, and more
@@ -61,6 +67,10 @@ Each product displays three distinct ratings:
 - [ ] Connect product page to Kyle's `/product/<id>` endpoint (swap in real data)
 - [ ] Integrate Evelyn's `profile.html` and Dung's `product-card.html` into the main pages
 - [ ] Review and merge Evelyn + Dung's HTML/CSS work
+- [ ] **Camera / Barcode Scanning** — add a "Scan" button on `search.html` that:
+  1. Opens the device camera via `navigator.mediaDevices.getUserMedia({ video: true })`
+  2. Detects barcodes using `BarcodeDetector` (with a `quagga.js` / `zxing-js` fallback for browsers that don't support it)
+  3. On successful decode, navigates to `product.html?id=<barcode>&category=food` (or beauty)
 
 ---
 
@@ -96,3 +106,6 @@ Each product displays three distinct ratings:
 - [ ] Change card border to subtle green on hover (`rgba(0,229,160,0.2)`)
 - [ ] Add `transition` to `.product-card` for smooth animation
 - [ ] After Evelyn leaves: take over her checkbox/radio styling if unfinished
+
+
+demo: scanning hackathon food
