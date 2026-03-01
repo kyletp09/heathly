@@ -60,7 +60,7 @@ section { padding: 96px 6%; }
   font-weight: 500;
   font-size: 0.95rem;
   padding: 14px 32px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius);
   transition: opacity 0.2s, transform 0.2s;
   box-shadow: 0 0 32px rgba(29, 185, 84, 0.40);
 }
@@ -75,7 +75,7 @@ section { padding: 96px 6%; }
   font-weight: 500;
   font-size: 0.95rem;
   padding: 13px 32px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius);
   border: 1px solid var(--border);
   transition: border-color 0.2s, background 0.2s;
 }

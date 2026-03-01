@@ -139,27 +139,65 @@
     .stat-num { font-size: 2.2rem; font-weight: 600; color: var(--primary); }
     .stat-lbl { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
 
-    /* Features */
+    /* Features Carousel */
     #features { background: var(--bg); }
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
+    .features-wrapper { display: flex; align-items: center; gap: 16px; }
+    .features-carousel { flex: 1; overflow: hidden; }
+    .features-track {
+      display: flex;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .feature-slide { flex: 0 0 100%; box-sizing: border-box; }
     .feature-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 28px;
-      transition: transform 0.2s, border-color 0.2s;
+      padding: 56px 52px;
+      max-width: 700px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 0 36px;
+      align-items: start;
     }
-    .feature-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(0,229,160,0.2);
+    .feature-num {
+      font-size: 3.5rem;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -2px;
+      padding-top: 4px;
+      border-right: 1px solid var(--border);
+      padding-right: 28px;
+      color: rgba(0,229,160,0.18);
     }
-    .feature-icon { font-size: 2rem; margin-bottom: 16px; }
-    .feature-card h3 { font-size: 1rem; font-weight: 500; margin-bottom: 10px; }
-    .feature-card p  { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
+    .feature-card h3 { font-size: 1.25rem; font-weight: 500; margin-bottom: 14px; letter-spacing: -0.3px; }
+    .feature-card p  { font-size: 0.92rem; color: var(--muted); line-height: 1.75; }
+
+    .carousel-controls { display: flex; justify-content: center; margin-top: 28px; }
+    .carousel-btn {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      border-radius: 30%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .carousel-btn:hover { border-color: var(--primary); background: var(--primary-dim); }
+    .carousel-dots { display: flex; gap: 8px; align-items: center; }
+    .carousel-dot {
+      width: 6px; height: 6px;
+      border-radius: 3px;
+      background: var(--border);
+      transition: background 0.25s, width 0.25s;
+      cursor: pointer;
+    }
+    .carousel-dot.active { background: var(--primary); width: 22px; }
 
     /* How It Works */
     #how-it-works { background: var(--bg-elevated); }
@@ -185,30 +223,81 @@
     .step h3 { font-size: 1rem; font-weight: 500; margin-bottom: 10px; }
     .step p  { font-size: 0.88rem; color: var(--muted); }
 
-    /* Categories */
+    /* Recommendations */
     #categories { background: var(--bg); }
-    .categories-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    .rec-wrap {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 44px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+    .rec-skin-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: var(--primary-dim);
+      border: 1px solid rgba(29,185,84,0.3);
+      border-radius: var(--radius-sm);
+      padding: 4px 12px;
+      margin-bottom: 18px;
+    }
+    .rec-pair {
+      display: flex;
+      align-items: center;
       gap: 20px;
     }
-    .cat-card {
+    .rec-card {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 36px 28px;
+      padding: 20px 22px;
       position: relative;
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.2s;
-      border: 1px solid transparent;
     }
-    .cat-card:hover { transform: scale(1.02); }
-    .cat-card.beauty       { background: linear-gradient(135deg, #e8e6ff, #c7d2fe); border-color: rgba(129,140,248,0.45); }
-    .cat-card.food         { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-color: rgba(0,229,160,0.45); }
-    .cat-card.supplements  { background: linear-gradient(135deg, #f3e8ff, #ddd6fe); border-color: rgba(167,139,250,0.45); }
-    .cat-card.household    { background: linear-gradient(135deg, #e0f2fe, #bae6fd); border-color: rgba(56,189,248,0.45); }
-    .cat-emoji { font-size: 2.8rem; margin-bottom: 14px; display: block; }
-    .cat-card h3 { font-size: 1.2rem; font-weight: 500; margin-bottom: 6px; }
-    .cat-card p  { font-size: 0.85rem; color: var(--muted); }
+    .rec-card.flagged { border-color: rgba(239,68,68,0.25); }
+    .rec-card.matched { border-color: rgba(29,185,84,0.3); }
+    .rec-badge {
+      position: absolute;
+      top: -11px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 800; line-height: 1;
+    }
+    .rec-badge.x     { left: 14px;  background: #EF4444; color: #fff; }
+    .rec-badge.check { right: 14px; background: var(--primary); color: #000; }
+    .rec-product { font-size: 0.92rem; font-weight: 500; margin-bottom: 8px; }
+    .rec-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+    .rec-status {
+      font-size: 0.78rem;
+      font-weight: 400;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .rec-status::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .rec-status.poor      { color: #C02020; }
+    .rec-status.poor::before      { background: #EF4444; }
+    .rec-status.excellent { color: var(--primary); }
+    .rec-status.excellent::before { background: var(--primary); }
+    .rec-arrow { font-size: 1.4rem; color: var(--muted); flex-shrink: 0; }
+    .rec-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+    @media (max-width: 640px) {
+      .rec-wrap { padding: 28px 20px; }
+      .rec-pair { flex-direction: column; }
+      .rec-arrow { transform: rotate(90deg); }
+    }
 
     /* CTA */
     #cta {
@@ -335,36 +424,76 @@
       <div class="section-label">Features</div>
       <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:600;margin-bottom:12px;letter-spacing:-1px">Everything you need to shop smarter</h2>
       <p style="color:var(--muted);font-size:1rem;margin-bottom:48px;max-width:520px">From your morning moisturizer to your afternoon snack — every label covered.</p>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">📷</div>
-          <h3>Barcode &amp; Label Scanner</h3>
-          <p>Point your camera at any product barcode or ingredient label and get an instant full breakdown.</p>
+      <div class="features-wrapper">
+        <button class="carousel-btn" id="featuresPrev" aria-label="Previous feature">&#8592;</button>
+        <div class="features-carousel">
+        <div class="features-track" id="featuresTrack">
+          <div class="feature-slide">
+            <div class="feature-card">
+              <div class="feature-num">01</div>
+              <div class="feature-body">
+                <h3>Barcode &amp; Label Scanner</h3>
+                <p>Point your camera at any product barcode or ingredient label and get an instant full breakdown.</p>
+              </div>
+            </div>
+          </div>
+          <div class="feature-slide">
+            <div class="feature-card">
+              <div class="feature-num">02</div>
+              <div class="feature-body">
+                <h3>Professional Toxicity Ratings</h3>
+                <p>Expert-assessed scores flag over 500 harmful chemicals including parabens, sulfates, and phthalates.</p>
+              </div>
+            </div>
+          </div>
+          <div class="feature-slide">
+            <div class="feature-card">
+              <div class="feature-num">03</div>
+              <div class="feature-body">
+                <h3>Personalized Profile Match</h3>
+                <p>Input your health concerns, skin type, allergies, and dietary needs — every product is scored just for you.</p>
+              </div>
+            </div>
+          </div>
+          <div class="feature-slide">
+            <div class="feature-card">
+              <div class="feature-num">04</div>
+              <div class="feature-body">
+                <h3>Cleaner Alternatives</h3>
+                <p>When we find something sketchy, we suggest healthier swaps you'll actually want to buy.</p>
+              </div>
+            </div>
+          </div>
+          <div class="feature-slide">
+            <div class="feature-card">
+              <div class="feature-num">05</div>
+              <div class="feature-body">
+                <h3>Verified Community Reviews</h3>
+                <p>Real ratings from verified purchasers. Computer vision screens every uploaded photo for AI generation and editing. All ingredient claims — including ones that challenge mainstream science — must cite a study or regulatory source.</p>
+              </div>
+            </div>
+          </div>
+          <div class="feature-slide">
+            <div class="feature-card">
+              <div class="feature-num">06</div>
+              <div class="feature-body">
+                <h3>Track &amp; Follow Up</h3>
+                <p>Save your safe list and get 3-month check-ins to see how recommended products are working for you.</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">⚗️</div>
-          <h3>Professional Toxicity Ratings</h3>
-          <p>Expert-assessed scores flag over 500 harmful chemicals including parabens, sulfates, and phthalates.</p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">🎯</div>
-          <h3>Personalized Profile Match</h3>
-          <p>Input your health concerns, skin type, allergies, and dietary needs — every product is scored just for you.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🌿</div>
-          <h3>Cleaner Alternatives</h3>
-          <p>When we find something sketchy, we suggest healthier swaps you'll actually want to buy.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">⭐</div>
-          <h3>Verified Community Reviews</h3>
-          <p>Real ratings from verified purchasers. Computer vision screens every uploaded photo for AI generation and editing. All ingredient claims — including ones that challenge mainstream science — must cite a study or regulatory source.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🔖</div>
-          <h3>Track &amp; Follow Up</h3>
-          <p>Save your safe list and get 3-month check-ins to see how recommended products are working for you.</p>
+        <button class="carousel-btn" id="featuresNext" aria-label="Next feature">&#8594;</button>
+      </div>
+      <div class="carousel-controls">
+        <div class="carousel-dots" id="featuresDots">
+          <div class="carousel-dot active"></div>
+          <div class="carousel-dot"></div>
+          <div class="carousel-dot"></div>
+          <div class="carousel-dot"></div>
+          <div class="carousel-dot"></div>
+          <div class="carousel-dot"></div>
         </div>
       </div>
     </div>
@@ -396,33 +525,68 @@
     </div>
   </section>
 
-  <!-- ── CATEGORIES ── -->
+  <!-- ── RECOMMENDATIONS ── -->
   <section id="categories">
     <div class="container">
-      <div class="section-label">What We Scan</div>
-      <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:600;margin-bottom:12px;letter-spacing:-1px">Every aisle, every label</h2>
-      <p style="color:var(--muted);font-size:1rem;margin-bottom:48px;max-width:520px">Healthly covers the products you use every single day.</p>
-      <div class="categories-grid">
-        <div class="cat-card beauty">
-          <span class="cat-emoji">💄</span>
-          <h3>Beauty &amp; Skincare</h3>
-          <p>Moisturizers, serums, makeup, sunscreen, and more.</p>
+      <div class="section-label">Recommendations</div>
+      <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:600;margin-bottom:12px;letter-spacing:-1px">Get recommendations,<br>specifically tailored to you</h2>
+      <p style="color:var(--muted);font-size:1rem;margin-bottom:48px;max-width:520px">Tell us your skin type, sensitivities, and goals — we flag what to avoid and surface what actually works for you.</p>
+      <div class="rec-wrap">
+
+        <!-- Acne-Prone Skin -->
+        <div class="rec-block">
+          <div class="rec-skin-tag">Acne-Prone Skin</div>
+          <div class="rec-pair">
+            <div class="rec-card flagged">
+              <div class="rec-badge x">✕</div>
+              <div class="rec-product">Neutrogena Oil-Free Acne Wash</div>
+              <div class="rec-tags">
+                <span class="tag tag-avoid">Sodium Lauryl Sulfate</span>
+                <span class="tag tag-caution">Fragrance</span>
+              </div>
+              <div class="rec-status poor">Poor match</div>
+            </div>
+            <div class="rec-arrow">&#8594;</div>
+            <div class="rec-card matched">
+              <div class="rec-badge check">✓</div>
+              <div class="rec-product">La Roche-Posay Effaclar Gel</div>
+              <div class="rec-tags">
+                <span class="tag tag-safe">Niacinamide</span>
+                <span class="tag tag-safe">Zinc PCA</span>
+              </div>
+              <div class="rec-status excellent">Excellent match</div>
+            </div>
+          </div>
         </div>
-        <div class="cat-card food">
-          <span class="cat-emoji">🥗</span>
-          <h3>Food &amp; Drinks</h3>
-          <p>Snacks, packaged meals, sauces, beverages, and additives.</p>
+
+        <hr class="rec-divider">
+
+        <!-- Dry Skin -->
+        <div class="rec-block">
+          <div class="rec-skin-tag">Dry Skin</div>
+          <div class="rec-pair">
+            <div class="rec-card flagged">
+              <div class="rec-badge x">✕</div>
+              <div class="rec-product">Dove Sensitive Body Wash</div>
+              <div class="rec-tags">
+                <span class="tag tag-avoid">Methylparaben</span>
+                <span class="tag tag-caution">Alcohol Denat.</span>
+              </div>
+              <div class="rec-status poor">Poor match</div>
+            </div>
+            <div class="rec-arrow">&#8594;</div>
+            <div class="rec-card matched">
+              <div class="rec-badge check">✓</div>
+              <div class="rec-product">Vanicream Gentle Cleanser</div>
+              <div class="rec-tags">
+                <span class="tag tag-safe">Ceramide NP</span>
+                <span class="tag tag-safe">Hyaluronic Acid</span>
+              </div>
+              <div class="rec-status excellent">Excellent match</div>
+            </div>
+          </div>
         </div>
-        <div class="cat-card supplements">
-          <span class="cat-emoji">💊</span>
-          <h3>Supplements</h3>
-          <p>Vitamins, protein powders, pre-workouts, and herbal blends.</p>
-        </div>
-        <div class="cat-card household">
-          <span class="cat-emoji">🧹</span>
-          <h3>Household</h3>
-          <p>Cleaning sprays, detergents, air fresheners, and personal care.</p>
-        </div>
+
       </div>
     </div>
   </section>
@@ -442,5 +606,36 @@
     <p>© 2026 Healthly · Built with love at HOTH 13</p>
   </footer>
 
+  <script>
+    (function () {
+      const track = document.getElementById('featuresTrack');
+      const dots  = document.querySelectorAll('#featuresDots .carousel-dot');
+      let current = 0;
+      const total = dots.length;
+      let timer;
+
+      function goTo(n) {
+        current = (n + total) % total;
+        track.style.transform = 'translateX(-' + (current * 100) + '%)';
+        dots.forEach(function (d, i) { d.classList.toggle('active', i === current); });
+      }
+
+      function startTimer() {
+        clearInterval(timer);
+        timer = setInterval(function () { goTo(current + 1); }, 5000);
+      }
+
+      function onUserNav(n) {
+        goTo(n);
+        startTimer();
+      }
+
+      document.getElementById('featuresPrev').addEventListener('click', function () { onUserNav(current - 1); });
+      document.getElementById('featuresNext').addEventListener('click', function () { onUserNav(current + 1); });
+      dots.forEach(function (d, i) { d.addEventListener('click', function () { onUserNav(i); }); });
+
+      startTimer();
+    })();
+  </script>
 </body>
 </html>
