@@ -48,3 +48,51 @@ Each product displays three distinct ratings:
 ---
 
 ## Built at HOTH 13
+
+---
+
+## Team & Task Breakdown
+
+### Patrick — CS, Frontend Lead
+**Files:** `healthly.html`, `search.html`, `product.html`, `style.css`
+- [ ] Wire up search page — on submit, call Kyle's `/search` API and render product cards
+- [ ] Wire up profile page — collect form data and POST to Kyle's `/profile` endpoint
+- [ ] Make product cards on search results page link to `product.html`
+- [ ] Connect product page to Kyle's `/product/<id>` endpoint (swap in real data)
+- [ ] Integrate Evelyn's `profile.html` and Dung's `product-card.html` into the main pages
+- [ ] Review and merge Evelyn + Dung's HTML/CSS work
+
+---
+
+### Kyle — CS, Python Backend
+**Files:** `app.py` (create this), any helper modules
+- [ ] Set up Flask server (`app.py`) with CORS enabled
+- [ ] `GET /search?q=<query>` — hit Open Food Facts API or mock data, return list of products as JSON
+- [ ] `GET /product/<id>` — return full product details (name, brand, ingredients, ratings)
+- [ ] `POST /profile` — accept and store user health profile (dict is fine for hackathon)
+- [ ] `POST /analyze` — send ingredient list to Claude API, get back toxicity score + flagged ingredients
+- [ ] Return profile match % based on user profile vs product ingredients
+
+---
+
+### Evelyn — Data Sci, Frontend (Beginner)
+**File:** `product-card.html` ← working with Dung (leaving in ~1 hour, prioritize these first)
+- [ ] **PRIORITY:** Style `.checkbox-label` so it looks like a pill chip (border, padding, hover)
+- [ ] **PRIORITY:** Make checked checkboxes glow green using `.checkbox-label:has(input:checked)`
+- [ ] **PRIORITY:** Style `.radio-label` similarly (same approach as checkbox)
+- [ ] Add `transition` so hover animations are smooth
+- [ ] Before leaving: hand off any unfinished styling notes to Dung
+
+---
+
+### Dung — Data Sci, Frontend (Beginner)
+**Files:** `product-card.html`, `product.html`
+- [ ] Tweak colors and fonts on the product cards to match the site vibe (use CSS variables from `style.css`)
+- [ ] In `product.html`, add a Wikipedia link next to each ingredient name in the ingredient list
+  - Format: `<a href="https://en.wikipedia.org/wiki/[Ingredient_Name]" target="_blank">Learn more ↗</a>`
+  - Add it inside each `.ing-row` or `.ing-detail` block
+- [ ] Style the Wikipedia links — small, muted color (`var(--muted)`), underline on hover
+- [ ] Add a hover effect to `.product-card` (lift with `transform: translateY(-4px)`)
+- [ ] Change card border to subtle green on hover (`rgba(0,229,160,0.2)`)
+- [ ] Add `transition` to `.product-card` for smooth animation
+- [ ] After Evelyn leaves: take over her checkbox/radio styling if unfinished

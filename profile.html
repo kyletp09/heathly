@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Health Profile — Healthly</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── PAGE-SPECIFIC: PROFILE ── */
+    /* TODO (Evelyn): All your styling goes in this block */
+
+    .page-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 100px 5% 80px;
+    }
+
+    /* Page header */
+    .page-header {
+      margin-bottom: 40px;
+    }
+    .page-header h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+    .page-header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    /* Form sections */
+    .form-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .form-section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .form-section-title .section-icon {
+      font-size: 1.2rem;
+    }
+
+    /* Checkbox grid */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    /* TODO (Evelyn): Style this checkbox label to look like a pill/chip */
+    /* Right now it's a plain label — make it look nice! */
+    /* Hint: use border, border-radius, padding, and change the background on :has(input:checked) */
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 500;
+      /* TODO (Evelyn): add a transition here so it animates smoothly */
+    }
+
+    /* TODO (Evelyn): Make it glow green when checked */
+    /* .checkbox-label:has(input:checked) { ... } */
+
+    .checkbox-label input[type="checkbox"] {
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* Text input */
+    .text-input {
+      width: 100%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 0.9rem;
+      padding: 12px 16px;
+      font-family: inherit;
+      /* TODO (Evelyn): add a focus style — maybe a green border glow */
+    }
+    .text-input::placeholder { color: var(--muted); }
+
+    /* Radio options (for skin type) */
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    /* TODO (Evelyn): Style .radio-label similar to .checkbox-label */
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+    .radio-label input[type="radio"] {
+      accent-color: var(--primary);
+    }
+
+    /* Save button */
+    .save-row {
+      margin-top: 28px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ── -->
+  <nav class="nav">
+    <a href="healthly.html" class="nav-logo">health<span>ly</span></a>
+    <ul class="nav-links">
+      <li><a href="search.html">Search</a></li>
+      <li><a href="healthly.html">Home</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-wrap">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="section-label">Your Profile</div>
+      <h1>Health Profile</h1>
+      <p>Tell us about yourself so every product scan is personalized to <em>you</em>.</p>
+    </div>
+
+    <!-- ── SECTION 1: DIETARY RESTRICTIONS ── -->
+    <!-- TODO (Evelyn): Add more dietary options if you can think of any! -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <span class="section-icon">🥗</span>
+        Dietary Restrictions
+      </div>
+      <div class="checkbox-grid">
+        <label class="checkbox-label">
+          <input type="checkbox" name="diet" value="vegan" />
+          Vegan
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="diet" value="vegetarian" />
+          Vegetarian
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="diet" value="gluten-free" />
+          Gluten-Free
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="diet" value="dairy-free" />
+          Dairy-Free
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="diet" value="halal" />
+          Halal
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="diet" value="kosher" />
+          Kosher
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="diet" value="keto" />
+          Keto
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="diet" value="paleo" />
+          Paleo
+        </label>
+      </div>
+    </div>
+
+    <!-- ── SECTION 2: ALLERGIES ── -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <span class="section-icon">⚠️</span>
+        Allergies
+      </div>
+      <div class="checkbox-grid">
+        <label class="checkbox-label">
+          <input type="checkbox" name="allergy" value="nuts" />
+          Tree Nuts
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="allergy" value="peanuts" />
+          Peanuts
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="allergy" value="shellfish" />
+          Shellfish
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="allergy" value="soy" />
+          Soy
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="allergy" value="eggs" />
+          Eggs
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="allergy" value="wheat" />
+          Wheat
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="allergy" value="fragrance" />
+          Fragrance
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="allergy" value="latex" />
+          Latex
+        </label>
+      </div>
+      <!-- TODO (Evelyn): Style this label and input nicely, add some margin-top -->
+      <div style="margin-top: 14px;">
+        <label style="font-size: 0.82rem; color: var(--muted); display:block; margin-bottom:6px;">Other allergies (separate with commas)</label>
+        <input class="text-input" type="text" placeholder="e.g. sesame, penicillin" />
+      </div>
+    </div>
+
+    <!-- ── SECTION 3: SKIN TYPE ── -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <span class="section-icon">✨</span>
+        Skin Type
+      </div>
+      <div class="radio-group">
+        <label class="radio-label">
+          <input type="radio" name="skin" value="oily" />
+          Oily
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="skin" value="dry" />
+          Dry
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="skin" value="combination" />
+          Combination
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="skin" value="normal" />
+          Normal
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="skin" value="sensitive" />
+          Sensitive
+        </label>
+      </div>
+    </div>
+
+    <!-- ── SECTION 4: SKIN CONCERNS ── -->
+    <!-- TODO (Evelyn): Copy the structure from Section 1 (dietary) to fill this out -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <span class="section-icon">🔬</span>
+        Skin Concerns
+      </div>
+      <div class="checkbox-grid">
+        <label class="checkbox-label">
+          <input type="checkbox" name="skin-concern" value="acne" />
+          Acne-Prone
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="skin-concern" value="eczema" />
+          Eczema
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="skin-concern" value="rosacea" />
+          Rosacea
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="skin-concern" value="hyperpigmentation" />
+          Hyperpigmentation
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="skin-concern" value="anti-aging" />
+          Anti-Aging
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="skin-concern" value="brightening" />
+          Brightening
+        </label>
+      </div>
+    </div>
+
+    <!-- ── SECTION 5: HEALTH CONDITIONS ── -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <span class="section-icon">🫀</span>
+        Health Conditions
+        <span style="font-size:0.72rem;color:var(--muted);font-weight:400;margin-left:4px">(optional)</span>
+      </div>
+      <div class="checkbox-grid">
+        <label class="checkbox-label">
+          <input type="checkbox" name="condition" value="pregnancy" />
+          Pregnant / Nursing
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="condition" value="diabetes" />
+          Diabetes
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="condition" value="hormonal" />
+          Hormonal Sensitivity
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="condition" value="autoimmune" />
+          Autoimmune
+        </label>
+      </div>
+    </div>
+
+    <!-- Save Button -->
+    <!-- TODO (Evelyn): Make this button look like the .btn-primary from style.css -->
+    <div class="save-row">
+      <button class="btn-primary" id="save-btn">Save Profile →</button>
+    </div>
+
+  </div><!-- end page-wrap -->
+
+  <footer>
+    <div class="footer-logo">health<span>ly</span></div>
+    <p>A community that will eradicate the toxicity in our daily life.</p>
+    <p>© 2026 Healthly · Built with love at HOTH 13</p>
+  </footer>
+
+</body>
+</html>
