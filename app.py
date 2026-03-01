@@ -1,18 +1,10 @@
-import os
 import uuid
-import json
 import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from anthropic import Anthropic
-from dotenv import load_dotenv
-
-load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
-
-client = Anthropic()
 
 # In-memory profile store (fine for hackathon)
 profiles = {}
@@ -210,57 +202,6 @@ def get_profile(profile_id):
         return jsonify({"error": "Profile not found"}), 404
     return jsonify({"profile_id": profile_id, **profile})
 
-
-# ─── Analyze ───────────────────────────────────────────────────────────────────
-
-@app.route("/analyze", methods=["POST"])
-def analyze():
-    body = request.get_json(silent=True) or {}
-    ingredients = body.get("ingredients", [])
-    profile_id = body.get("profile_id", "")
-
-    if not ingredients:
-        return jsonify({"error": "No ingredients provided"}), 400
-
-    profile = profiles.get(profile_id, {})
-
-    profile_context = ""
-    if profile:
-        profile_context = f"""
-User health profile:
-- Dietary restrictions: {", ".join(profile.get("dietary", [])) or "none"}
-- Allergies: {", ".join(profile.get("allergies", [])) or "none"}
-- Skin type: {profile.get("skin_type") or "not specified"}
-- Skin concerns: {", ".join(profile.get("skin_concerns", [])) or "none"}
-- Health conditions: {", ".join(profile.get("conditions", [])) or "none"}
-"""
-
-    prompt = f"""You are an ingredient safety expert. Analyze the following ingredient list and respond with ONLY valid JSON (no markdown, no extra text).
-
-Ingredients: {", ".join(ingredients)}
-{profile_context}
-Return this exact JSON structure:
-{{
-  "toxicity_score": <integer 0-100, where 0 is completely safe and 100 is extremely toxic>,
-  "flagged_ingredients": [
-    {{
-      "name": "<ingredient name>",
-      "concern": "<brief reason for concern>",
-      "severity": "<low|medium|high>"
-    }}
-  ],
-  "profile_match": <integer 0-100 representing how well this product suits the user profile, 100 if no profile>,
-  "summary": "<one sentence overall assessment>"
-}}"""
-
-    message = client.messages.create(
-        model="claude-haiku-4-5-20251001",
-        max_tokens=1024,
-        messages=[{"role": "user", "content": prompt}],
-    )
-
-    result = json.loads(message.content[0].text)
-    return jsonify(result)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
