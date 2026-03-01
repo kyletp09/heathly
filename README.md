@@ -2,6 +2,8 @@
 
 > A community dedicated to eradicating toxicity from our daily lives — one ingredient at a time.
 
+> https://devpost.com/software/1210842/joins/IRCYL8FvotrzU_jjvu4IFg
+
 ---
 
 ## What is Healthly?
@@ -110,3 +112,5 @@ Each product displays three distinct ratings:
 
 demo: scanning hackathon food
 -We going to remove the search button and replace it with a search bar
+scanning hackathon food
+account should have history of searches & profile
