@@ -264,7 +264,7 @@
         <div id="product-brand" class="brand">by CeraVe · 14 ingredients</div>
         <div class="triple-rating">
           <div id="header-user"  class="rating-pill r-user"><span class="r-icon">⭐</span> 4.1</div>
-          <div id="header-tox"   class="rating-pill r-tox med"><span class="r-icon">☣️</span> 72</div>
+          <div id="header-tox"   class="rating-pill r-tox med"><span class="r-icon">☀️</span> 72</div>
           <div id="header-match" class="rating-pill r-match"><span class="r-icon">🎯</span> 88%</div>
         </div>
       </div>
@@ -280,9 +280,9 @@
         <div class="rc-sub">1,243 community reviews</div>
       </div>
       <div class="rating-card r-tox">
-        <div class="rc-icon">☣️</div>
+        <div class="rc-icon">☀️</div>
         <div id="tox-value" class="rc-value">72</div>
-        <div class="rc-label">Toxicity Score</div>
+        <div class="rc-label">Health Score ☀️</div>
         <div class="rc-bar">
           <div class="score-track">
             <div id="tox-bar" class="score-fill medium" style="width:72%"></div>
@@ -538,7 +538,7 @@
       document.getElementById('product-brand').textContent   = 'by ' + (p.brand || 'Unknown') + ' · ' + ingCount + ' ingredients';
 
       /* Scores */
-      var tox   = p.toxicity_score  !== undefined ? p.toxicity_score  : 72;
+      var tox   = p.health_score  !== undefined ? p.health_score  : 72;
       var user  = p.user_rating     !== undefined ? p.user_rating     : 4.1;
       var match = p.profile_match   !== undefined ? p.profile_match   : 88;
 
@@ -548,7 +548,7 @@
       document.getElementById('match-value').textContent       = match + '%';
       document.getElementById('match-bar').style.width         = match + '%';
       document.getElementById('header-user').innerHTML  = '<span class="r-icon">⭐</span> ' + user;
-      document.getElementById('header-tox').innerHTML   = '<span class="r-icon">☣️</span> ' + tox;
+      document.getElementById('header-tox').innerHTML   = '<span class="r-icon">☀️</span> ' + tox;
       document.getElementById('header-match').innerHTML = '<span class="r-icon">🎯</span> ' + match + '%';
 
       /* Flagged ingredients */

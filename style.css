@@ -217,6 +217,18 @@ section { padding: 96px 6%; }
 .score-fill.medium { background: var(--warn); }
 .score-fill.low    { background: var(--accent); }
 
+/* ── FOOTER ── */
+footer {
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border);
+  text-align: center;
+  padding: 36px 6%;
+}
+footer .footer-logo { font-family: 'Playfair Display', Georgia, serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 8px; }
+footer .footer-logo span { color: var(--primary); }
+footer p { font-size: 0.82rem; color: var(--muted); }
+footer p + p { margin-top: 6px; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 640px) {
   section { padding: 64px 5%; }

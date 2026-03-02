@@ -264,7 +264,7 @@ landing:
 
 - no password verification. how to enable?
 
-- provide an md with all the pages/current products available and a roadmap of the website 
+- provide an md with all the pages/current products available and a roadmap of the website
 
 
 Auth flow

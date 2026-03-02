@@ -70,7 +70,7 @@ MOCK_PRODUCTS = [
         "image": "",
         "category": "food",
         "ingredients_text": "Carbonated Water, Erythritol, Citric Acid, Natural Flavors, Taurine, Sodium Citrate, L-Carnitine L-Tartrate, Caffeine, Sorbic Acid, Benzoic Acid, Niacinamide, Sucralose, Acesulfame Potassium, Salt, D-Glucuronolactone, Inositol, Guarana Extract, Pyridoxine Hydrochloride, Riboflavin, Cyanocobalamin",
-        "toxicity_score": 52,
+        "health_score": 52,
         "user_rating": 4.3,
         "profile_match": 40,
         "ingredients": [
