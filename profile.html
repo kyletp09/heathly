@@ -154,11 +154,16 @@
 
     /* History chips */
     .history-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .history-item {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
     .history-chip {
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: 8px 16px;
+      padding: 8px 26px 8px 16px;
       background: var(--bg-elevated);
       border: 1px solid var(--border);
       border-radius: var(--radius-pill);
@@ -168,6 +173,29 @@
       transition: border-color 0.2s, background 0.2s;
     }
     .history-chip:hover { border-color: var(--primary); background: var(--primary-dim); }
+    .history-delete {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+      line-height: 1;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.15s, color 0.2s, background 0.2s;
+    }
+    .history-item:hover .history-delete,
+    .history-item:focus-within .history-delete { opacity: 1; }
+    .history-delete:hover {
+      color: var(--accent);
+      background: rgba(255,77,109,0.12);
+    }
     .history-empty { font-size: 0.85rem; color: var(--muted); }
 
     /* Checked states */
@@ -452,9 +480,26 @@
       }
       wrap.style.display = '';
       list.innerHTML = hist.map(function (h) {
-        return '<a href="' + escHtml(h.url) + '" class="history-chip">🔍 ' + escHtml(h.label) + '</a>';
+        return '<span class="history-item">' +
+          '<a href="' + escHtml(h.url) + '" class="history-chip">🔍 ' + escHtml(h.label) + '</a>' +
+          '<button type="button" class="history-delete" data-url="' + escHtml(h.url) + '" aria-label="Delete history item">×</button>' +
+          '</span>';
       }).join('');
     }
+
+    document.getElementById('profile-history-list').addEventListener('click', function (e) {
+      var btn = e.target.closest('.history-delete');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      var url = btn.getAttribute('data-url');
+      var hist = HLAuth.getHistory().filter(function (item) {
+        return item.url !== url;
+      });
+      localStorage.setItem('hl_history', JSON.stringify(hist));
+      renderProfileHistory();
+    });
 
     /* ── Save profile ── */
     document.getElementById('save-btn').addEventListener('click', async function () {
@@ -517,6 +562,21 @@
       var el = document.querySelector(sel);
       if (el) el.checked = true;
     }
+
+    /* Allow skin type radio to be deselected by clicking it again */
+    (function wireDeselectableSkinType() {
+      var radios = document.querySelectorAll('input[type="radio"][name="skin"]');
+      radios.forEach(function (radio) {
+        radio.addEventListener('mousedown', function () {
+          this.dataset.wasChecked = this.checked ? '1' : '0';
+        });
+        radio.addEventListener('click', function () {
+          if (this.dataset.wasChecked === '1') {
+            this.checked = false;
+          }
+        });
+      });
+    }());
   </script>
 </body>
 </html>

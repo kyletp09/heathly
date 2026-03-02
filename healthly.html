@@ -733,6 +733,22 @@
     /* ── Barcode scan ── */
     var cameraStream = null, cameraInterval = null, cameraQuagga = false;
 
+    function barcodeToSearchQuery(rawCode) {
+      var code = String(rawCode || '').trim();
+      var map = {
+        '070847899488': 'monster energy ultra wild passion'
+      };
+      return map[code] || code;
+    }
+
+    function goToSearchFromBarcode(rawCode) {
+      var query = barcodeToSearchQuery(rawCode);
+      if (!query) return;
+      var url = 'search.html?q=' + encodeURIComponent(query);
+      HLAuth.addToHistory({ label: query, url: url });
+      window.location.href = url;
+    }
+
     /* Image button → file picker only */
     document.getElementById('hero-scan-btn').addEventListener('click', function () {
       document.getElementById('barcode-file').click();
@@ -761,9 +777,7 @@
           var codes = await bd.detect(img);
           if (codes.length) {
             var raw = codes[0].rawValue;
-            var url = 'product.html?id=' + encodeURIComponent(raw) + '&category=food';
-            HLAuth.addToHistory({ label: 'Barcode: ' + raw, url: url });
-            window.location.href = url;
+            goToSearchFromBarcode(raw);
             return;
           }
         } catch (err) { /* fall through */ }
@@ -804,9 +818,7 @@
             if (codes.length) {
               var raw = codes[0].rawValue;
               closeCameraScanner();
-              var url = 'product.html?id=' + encodeURIComponent(raw) + '&category=food';
-              HLAuth.addToHistory({ label: 'Barcode: ' + raw, url: url });
-              window.location.href = url;
+              goToSearchFromBarcode(raw);
             }
           } catch (err) { /* keep trying */ }
         }, 400);
@@ -832,9 +844,7 @@
           var code = result.codeResult.code;
           if (!code) return;
           closeCameraScanner();
-          var url = 'product.html?id=' + encodeURIComponent(code) + '&category=food';
-          HLAuth.addToHistory({ label: 'Barcode: ' + code, url: url });
-          window.location.href = url;
+          goToSearchFromBarcode(code);
         });
 
       } else {

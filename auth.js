@@ -1,72 +1,116 @@
-/* auth.js — Healthly shared auth, modal & scan history */
+/* auth.js - Healthly shared auth, modal, and scan history */
 (function () {
   'use strict';
 
-  var BACKEND     = 'http://localhost:5001';
-  var AUTH_KEY    = 'hl_auth';
+  var BACKEND_URL = 'http://localhost:5001';
+  var AUTH_KEY = 'hl_auth';
   var HISTORY_KEY = 'hl_history';
 
-  /* ── Storage ─────────────────────────────────────────── */
+  // Storage helpers
   function getUser() {
-    try { return JSON.parse(localStorage.getItem(AUTH_KEY)); }
-    catch (e) { return null; }
+    try {
+      return JSON.parse(localStorage.getItem(AUTH_KEY));
+    } catch (error) {
+      return null;
+    }
   }
-  function setUser(d) { localStorage.setItem(AUTH_KEY, JSON.stringify(d)); }
-  function clearUser() { localStorage.removeItem(AUTH_KEY); }
+
+  function setUser(userData) {
+    localStorage.setItem(AUTH_KEY, JSON.stringify(userData));
+  }
+
+  function clearUser() {
+    localStorage.removeItem(AUTH_KEY);
+  }
 
   function getHistory() {
-    try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
-    catch (e) { return []; }
-  }
-  function addToHistory(item) {
-    var h = getHistory().filter(function (x) { return x.url !== item.url; });
-    h.unshift({ label: item.label, url: item.url, ts: Date.now() });
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(h.slice(0, 10)));
+    try {
+      return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+    } catch (error) {
+      return [];
+    }
   }
 
-  /* ── Public API ──────────────────────────────────────── */
+  function addToHistory(item) {
+    var history = getHistory().filter(function (entry) {
+      return entry.url !== item.url;
+    });
+
+    history.unshift({
+      label: item.label,
+      url: item.url,
+      ts: Date.now()
+    });
+
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 10)));
+  }
+
+  // Public API exposed to pages
   window.HLAuth = {
     getUser: getUser,
-    isLoggedIn: function () { return !!getUser(); },
+    isLoggedIn: function () {
+      return !!getUser();
+    },
     getHistory: getHistory,
     addToHistory: addToHistory,
     openModal: openModal,
     logout: function () {
       clearUser();
       updateNavState();
-      if (typeof window['onAuthChange'] === 'function') window['onAuthChange']();
-      var page = window.location.pathname.split('/').pop();
-      if (page === 'profile.html') window.location.href = 'healthly.html';
+
+      if (typeof window.onAuthChange === 'function') {
+        window.onAuthChange();
+      }
+
+      var currentPage = window.location.pathname.split('/').pop();
+      if (currentPage === 'profile.html') {
+        window.location.href = 'healthly.html';
+      }
     },
-    setProfileId: function (pid) {
-      var u = getUser();
-      if (u) { u.profile_id = pid; setUser(u); }
+    setProfileId: function (profileId) {
+      var user = getUser();
+      if (user) {
+        user.profile_id = profileId;
+        setUser(user);
+      }
     },
     getProfileId: function () {
-      var u = getUser();
-      return u ? (u.profile_id || null) : null;
+      var user = getUser();
+      return user ? (user.profile_id || null) : null;
     }
   };
 
-  /* ── Modal styles ────────────────────────────────────── */
-  var SI = [
-    'width:100%;', 'padding:12px 14px;',
-    'border:1px solid var(--border);', 'border-radius:var(--radius-sm);',
-    'background:var(--bg-elevated);', 'color:var(--text);',
-    'font-size:0.9rem;', 'font-family:inherit;',
-    'margin-bottom:10px;', 'outline:none;', 'box-sizing:border-box;'
+  // Reused inline styles for modal inputs/buttons
+  var INPUT_STYLE = [
+    'width:100%;',
+    'padding:12px 14px;',
+    'border:1px solid var(--border);',
+    'border-radius:var(--radius-sm);',
+    'background:var(--bg-elevated);',
+    'color:var(--text);',
+    'font-size:0.9rem;',
+    'font-family:inherit;',
+    'margin-bottom:10px;',
+    'outline:none;',
+    'box-sizing:border-box;'
   ].join('');
 
-  var SB = [
-    'width:100%;', 'padding:13px;',
-    'background:var(--primary);', 'color:#000;',
-    'font-weight:500;', 'font-size:0.95rem;',
-    'border:none;', 'border-radius:var(--radius);',
-    'cursor:pointer;', 'font-family:inherit;', 'transition:opacity 0.2s;'
+  var BUTTON_STYLE = [
+    'width:100%;',
+    'padding:13px;',
+    'background:var(--primary);',
+    'color:#000;',
+    'font-weight:500;',
+    'font-size:0.95rem;',
+    'border:none;',
+    'border-radius:var(--radius);',
+    'cursor:pointer;',
+    'font-family:inherit;',
+    'transition:opacity 0.2s;'
   ].join('');
 
-  /* ── Modal HTML ──────────────────────────────────────── */
-  function buildModalHTML() {
+  // Builds the auth modal DOM as a single HTML string
+  function buildModalHtml() {
     return (
       '<div id="hl-auth-overlay" style="display:none;position:fixed;inset:0;z-index:9000;' +
       'background:rgba(0,0,0,0.55);align-items:center;justify-content:center;">' +
@@ -90,37 +134,37 @@
       'font-family:inherit;">Create account</button>' +
       '</div>' +
 
-      /* ── Login form ── */
+      // Login form
       '<div id="hl-form-login">' +
-      '<input id="hl-login-email" type="email" placeholder="Email" style="' + SI + '" />' +
-      '<input id="hl-login-pass" type="password" placeholder="Password" style="' + SI + '" />' +
+      '<input id="hl-login-email" type="email" placeholder="Email" style="' + INPUT_STYLE + '" />' +
+      '<input id="hl-login-pass" type="password" placeholder="Password" style="' + INPUT_STYLE + '" />' +
       '<div id="hl-login-err" style="color:#C02020;font-size:0.82rem;min-height:18px;margin-bottom:8px;"></div>' +
-      '<button id="hl-login-btn" style="' + SB + '">Log in</button>' +
+      '<button id="hl-login-btn" style="' + BUTTON_STYLE + '">Log in</button>' +
       '<div style="text-align:center;margin-top:12px;">' +
       '<a id="hl-forgot-link" href="#" style="font-size:0.82rem;color:var(--muted);text-decoration:underline;">Forgot password?</a>' +
       '</div>' +
       '</div>' +
 
-      /* ── Register form ── */
+      // Register form
       '<div id="hl-form-register" style="display:none;">' +
-      '<input id="hl-reg-email" type="email" placeholder="Email" style="' + SI + '" />' +
-      '<input id="hl-reg-pass" type="password" placeholder="Password (min 6 chars)" style="' + SI + '" />' +
-      '<input id="hl-reg-pass2" type="password" placeholder="Confirm password" style="' + SI + '" />' +
+      '<input id="hl-reg-email" type="email" placeholder="Email" style="' + INPUT_STYLE + '" />' +
+      '<input id="hl-reg-pass" type="password" placeholder="Password (min 6 chars)" style="' + INPUT_STYLE + '" />' +
+      '<input id="hl-reg-pass2" type="password" placeholder="Confirm password" style="' + INPUT_STYLE + '" />' +
       '<div id="hl-reg-err" style="color:#C02020;font-size:0.82rem;min-height:18px;margin-bottom:8px;"></div>' +
-      '<button id="hl-reg-btn" style="' + SB + '">Create account</button>' +
+      '<button id="hl-reg-btn" style="' + BUTTON_STYLE + '">Create account</button>' +
       '</div>' +
 
-      /* ── Reset password form ── */
+      // Reset password form
       '<div id="hl-form-reset" style="display:none;">' +
       '<p style="font-size:0.85rem;color:var(--muted);margin-bottom:16px;">Enter your email and choose a new password.</p>' +
-      '<input id="hl-reset-email" type="email" placeholder="Email" style="' + SI + '" />' +
-      '<input id="hl-reset-pass" type="password" placeholder="New password (min 6 chars)" style="' + SI + '" />' +
-      '<input id="hl-reset-pass2" type="password" placeholder="Confirm new password" style="' + SI + '" />' +
+      '<input id="hl-reset-email" type="email" placeholder="Email" style="' + INPUT_STYLE + '" />' +
+      '<input id="hl-reset-pass" type="password" placeholder="New password (min 6 chars)" style="' + INPUT_STYLE + '" />' +
+      '<input id="hl-reset-pass2" type="password" placeholder="Confirm new password" style="' + INPUT_STYLE + '" />' +
       '<div id="hl-reset-err" style="color:#C02020;font-size:0.82rem;min-height:18px;margin-bottom:8px;"></div>' +
-      '<div id="hl-reset-ok" style="color:var(--primary);font-size:0.82rem;margin-bottom:8px;display:none;">Password reset! Redirecting to login…</div>' +
-      '<button id="hl-reset-btn" style="' + SB + '">Reset password</button>' +
+      '<div id="hl-reset-ok" style="color:var(--primary);font-size:0.82rem;margin-bottom:8px;display:none;">Password reset! Redirecting to login...</div>' +
+      '<button id="hl-reset-btn" style="' + BUTTON_STYLE + '">Reset password</button>' +
       '<div style="text-align:center;margin-top:12px;">' +
-      '<a id="hl-back-login" href="#" style="font-size:0.82rem;color:var(--muted);text-decoration:underline;">← Back to login</a>' +
+      '<a id="hl-back-login" href="#" style="font-size:0.82rem;color:var(--muted);text-decoration:underline;">&larr; Back to login</a>' +
       '</div>' +
       '</div>' +
 
@@ -129,69 +173,95 @@
   }
 
   function injectModal() {
-    if (document.getElementById('hl-auth-overlay')) return;
-    var wrap = document.createElement('div');
-    wrap.innerHTML = buildModalHTML();
-    document.body.appendChild(wrap.firstElementChild);
+    if (document.getElementById('hl-auth-overlay')) {
+      return;
+    }
+
+    var container = document.createElement('div');
+    container.innerHTML = buildModalHtml();
+    document.body.appendChild(container.firstElementChild);
     wireModal();
   }
 
   function wireModal() {
     var overlay = document.getElementById('hl-auth-overlay');
-    overlay.addEventListener('click', function (e) {
-      if (e.target === overlay) closeModal();
+
+    overlay.addEventListener('click', function (event) {
+      if (event.target === overlay) {
+        closeModal();
+      }
     });
+
     document.getElementById('hl-modal-close').addEventListener('click', closeModal);
-    document.querySelectorAll('.hl-tab').forEach(function (t) {
-      t.addEventListener('click', function () { switchTab(t.dataset.tab); });
+
+    document.querySelectorAll('.hl-tab').forEach(function (tabButton) {
+      tabButton.addEventListener('click', function () {
+        switchTab(tabButton.dataset.tab);
+      });
     });
+
     document.getElementById('hl-login-btn').addEventListener('click', doLogin);
     document.getElementById('hl-reg-btn').addEventListener('click', doRegister);
     document.getElementById('hl-reset-btn').addEventListener('click', doReset);
 
-    document.getElementById('hl-forgot-link').addEventListener('click', function (e) {
-      e.preventDefault(); showResetForm();
+    document.getElementById('hl-forgot-link').addEventListener('click', function (event) {
+      event.preventDefault();
+      showResetForm();
     });
-    document.getElementById('hl-back-login').addEventListener('click', function (e) {
-      e.preventDefault(); showLoginForm();
+
+    document.getElementById('hl-back-login').addEventListener('click', function (event) {
+      event.preventDefault();
+      showLoginForm();
     });
 
     ['hl-login-email', 'hl-login-pass'].forEach(function (id) {
-      document.getElementById(id).addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') doLogin();
+      document.getElementById(id).addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          doLogin();
+        }
       });
     });
+
     ['hl-reg-email', 'hl-reg-pass', 'hl-reg-pass2'].forEach(function (id) {
-      document.getElementById(id).addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') doRegister();
+      document.getElementById(id).addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          doRegister();
+        }
       });
     });
+
     ['hl-reset-email', 'hl-reset-pass', 'hl-reset-pass2'].forEach(function (id) {
-      document.getElementById(id).addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') doReset();
+      document.getElementById(id).addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          doReset();
+        }
       });
     });
   }
 
-  function switchTab(name) {
-    document.querySelectorAll('.hl-tab').forEach(function (t) {
-      var on = t.dataset.tab === name;
-      t.style.background = on ? 'var(--primary)' : 'transparent';
-      t.style.color      = on ? '#000' : 'var(--muted)';
+  function switchTab(tabName) {
+    document.querySelectorAll('.hl-tab').forEach(function (tabButton) {
+      var isActive = tabButton.dataset.tab === tabName;
+      tabButton.style.background = isActive ? 'var(--primary)' : 'transparent';
+      tabButton.style.color = isActive ? '#000' : 'var(--muted)';
     });
-    document.getElementById('hl-form-login').style.display    = name === 'login'    ? '' : 'none';
-    document.getElementById('hl-form-register').style.display = name === 'register' ? '' : 'none';
-    document.getElementById('hl-form-reset').style.display    = 'none';
+
+    document.getElementById('hl-form-login').style.display = tabName === 'login' ? '' : 'none';
+    document.getElementById('hl-form-register').style.display = tabName === 'register' ? '' : 'none';
+    document.getElementById('hl-form-reset').style.display = 'none';
   }
 
   function showResetForm() {
     document.getElementById('hl-form-login').style.display = 'none';
     document.getElementById('hl-form-reset').style.display = '';
-    document.getElementById('hl-reset-err').textContent    = '';
-    document.getElementById('hl-reset-ok').style.display   = 'none';
-    /* pre-fill email if already typed in login form */
-    var email = (document.getElementById('hl-login-email').value || '').trim();
-    if (email) document.getElementById('hl-reset-email').value = email;
+    document.getElementById('hl-reset-err').textContent = '';
+    document.getElementById('hl-reset-ok').style.display = 'none';
+
+    // Prefill reset email if login email is already typed.
+    var loginEmail = (document.getElementById('hl-login-email').value || '').trim();
+    if (loginEmail) {
+      document.getElementById('hl-reset-email').value = loginEmail;
+    }
   }
 
   function showLoginForm() {
@@ -199,161 +269,231 @@
     document.getElementById('hl-form-login').style.display = '';
   }
 
-  function openModal(tab) {
+  function openModal(tabName) {
     document.getElementById('hl-auth-overlay').style.display = 'flex';
-    if (tab) switchTab(tab);
+    if (tabName) {
+      switchTab(tabName);
+    }
   }
 
   function closeModal() {
     document.getElementById('hl-auth-overlay').style.display = 'none';
   }
 
-  function setLoading(btnId, on) {
-    var btn = document.getElementById(btnId);
-    if (!btn) return;
-    btn.disabled      = on;
-    btn.style.opacity = on ? '0.6' : '1';
+  function setLoading(buttonId, isLoading) {
+    var button = document.getElementById(buttonId);
+    if (!button) {
+      return;
+    }
+
+    button.disabled = isLoading;
+    button.style.opacity = isLoading ? '0.6' : '1';
   }
 
-  /* ── Login ───────────────────────────────────────────── */
+  function createMockToken() {
+    return 'mock_' + Math.random().toString(36).slice(2) + Date.now();
+  }
+
+  // Login flow
   async function doLogin() {
     var email = document.getElementById('hl-login-email').value.trim().toLowerCase();
-    var pass  = document.getElementById('hl-login-pass').value;
-    var err   = document.getElementById('hl-login-err');
-    err.textContent = '';
+    var password = document.getElementById('hl-login-pass').value;
+    var errorNode = document.getElementById('hl-login-err');
+    errorNode.textContent = '';
 
-    if (!email || !email.includes('@')) { err.textContent = 'Please enter a valid email.'; return; }
-    if (!pass)                          { err.textContent = 'Please enter your password.';  return; }
+    if (!email || !email.includes('@')) {
+      errorNode.textContent = 'Please enter a valid email.';
+      return;
+    }
+
+    if (!password) {
+      errorNode.textContent = 'Please enter your password.';
+      return;
+    }
 
     setLoading('hl-login-btn', true);
+
     try {
-      var resp = await fetch(BACKEND + '/auth/login', {
+      var response = await fetch(BACKEND_URL + '/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, password: pass })
+        body: JSON.stringify({ email: email, password: password })
       });
-      var data = await resp.json();
-      if (!resp.ok) {
-        err.textContent = data.error || 'Login failed.';
+
+      var data = await response.json();
+
+      if (!response.ok) {
+        errorNode.textContent = data.error || 'Login failed.';
         setLoading('hl-login-btn', false);
         return;
       }
+
       setUser({ email: data.email, token: data.token });
-    } catch (e) {
-      /* Backend offline — fall back to local mock token */
-      setUser({ email: email, token: 'mock_' + Math.random().toString(36).slice(2) + Date.now() });
+    } catch (error) {
+      // Backend offline fallback for local demo use.
+      setUser({ email: email, token: createMockToken() });
     }
 
     setLoading('hl-login-btn', false);
     closeModal();
     updateNavState();
-    if (typeof window['onAuthChange'] === 'function') window['onAuthChange']();
+
+    if (typeof window.onAuthChange === 'function') {
+      window.onAuthChange();
+    }
   }
 
-  /* ── Register ────────────────────────────────────────── */
+  // Registration flow
   async function doRegister() {
     var email = document.getElementById('hl-reg-email').value.trim().toLowerCase();
-    var pass  = document.getElementById('hl-reg-pass').value;
-    var pass2 = document.getElementById('hl-reg-pass2').value;
-    var err   = document.getElementById('hl-reg-err');
-    err.textContent = '';
+    var password = document.getElementById('hl-reg-pass').value;
+    var confirmPassword = document.getElementById('hl-reg-pass2').value;
+    var errorNode = document.getElementById('hl-reg-err');
+    errorNode.textContent = '';
 
-    if (!email || !email.includes('@'))  { err.textContent = 'Please enter a valid email.';          return; }
-    if (pass.length < 6)                 { err.textContent = 'Password must be at least 6 chars.';   return; }
-    if (pass !== pass2)                  { err.textContent = 'Passwords do not match.';               return; }
+    if (!email || !email.includes('@')) {
+      errorNode.textContent = 'Please enter a valid email.';
+      return;
+    }
+
+    if (password.length < 6) {
+      errorNode.textContent = 'Password must be at least 6 chars.';
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      errorNode.textContent = 'Passwords do not match.';
+      return;
+    }
 
     setLoading('hl-reg-btn', true);
+
     try {
-      var resp = await fetch(BACKEND + '/auth/register', {
+      var response = await fetch(BACKEND_URL + '/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, password: pass })
+        body: JSON.stringify({ email: email, password: password })
       });
-      var data = await resp.json();
-      if (!resp.ok) {
-        err.textContent = data.error || 'Registration failed.';
+
+      var data = await response.json();
+
+      if (!response.ok) {
+        errorNode.textContent = data.error || 'Registration failed.';
         setLoading('hl-reg-btn', false);
         return;
       }
+
       setUser({ email: data.email, token: data.token });
-    } catch (e) {
-      /* Backend offline — local mock */
-      setUser({ email: email, token: 'mock_' + Math.random().toString(36).slice(2) + Date.now() });
+    } catch (error) {
+      // Backend offline fallback for local demo use.
+      setUser({ email: email, token: createMockToken() });
     }
 
     setLoading('hl-reg-btn', false);
     closeModal();
     updateNavState();
-    if (typeof window['onAuthChange'] === 'function') window['onAuthChange']();
+
+    if (typeof window.onAuthChange === 'function') {
+      window.onAuthChange();
+    }
   }
 
-  /* ── Reset password ──────────────────────────────────── */
+  // Reset password flow
   async function doReset() {
     var email = document.getElementById('hl-reset-email').value.trim().toLowerCase();
-    var pass  = document.getElementById('hl-reset-pass').value;
-    var pass2 = document.getElementById('hl-reset-pass2').value;
-    var err   = document.getElementById('hl-reset-err');
-    var ok    = document.getElementById('hl-reset-ok');
-    err.textContent = ''; ok.style.display = 'none';
+    var newPassword = document.getElementById('hl-reset-pass').value;
+    var confirmPassword = document.getElementById('hl-reset-pass2').value;
+    var errorNode = document.getElementById('hl-reset-err');
+    var successNode = document.getElementById('hl-reset-ok');
 
-    if (!email || !email.includes('@')) { err.textContent = 'Please enter a valid email.';         return; }
-    if (pass.length < 6)               { err.textContent = 'Password must be at least 6 chars.';  return; }
-    if (pass !== pass2)                { err.textContent = 'Passwords do not match.';              return; }
+    errorNode.textContent = '';
+    successNode.style.display = 'none';
+
+    if (!email || !email.includes('@')) {
+      errorNode.textContent = 'Please enter a valid email.';
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      errorNode.textContent = 'Password must be at least 6 chars.';
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      errorNode.textContent = 'Passwords do not match.';
+      return;
+    }
 
     setLoading('hl-reset-btn', true);
+
     try {
-      var resp = await fetch(BACKEND + '/auth/reset-password', {
+      var response = await fetch(BACKEND_URL + '/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, new_password: pass })
+        body: JSON.stringify({ email: email, new_password: newPassword })
       });
-      var data = await resp.json();
-      if (!resp.ok) {
-        err.textContent = data.error || 'Reset failed.';
+
+      var data = await response.json();
+
+      if (!response.ok) {
+        errorNode.textContent = data.error || 'Reset failed.';
         setLoading('hl-reset-btn', false);
         return;
       }
-      ok.style.display = '';
-      /* Pre-fill login form and switch back after 2 s */
+
+      successNode.style.display = '';
+
+      // Prefill login email and return to login after a short delay.
       setTimeout(function () {
         document.getElementById('hl-login-email').value = email;
-        document.getElementById('hl-login-pass').value  = '';
+        document.getElementById('hl-login-pass').value = '';
         showLoginForm();
       }, 2000);
-    } catch (e) {
-      err.textContent = 'Backend offline — start `python app.py` to reset passwords.';
+    } catch (error) {
+      errorNode.textContent = 'Backend offline - start `python app.py` to reset passwords.';
     }
+
     setLoading('hl-reset-btn', false);
   }
 
-  /* ── Nav state ───────────────────────────────────────── */
+  // Update top-right nav button based on auth state
   function updateNavState() {
-    var btn = document.getElementById('nav-auth-btn');
-    if (!btn) return;
+    var authButton = document.getElementById('nav-auth-btn');
+    if (!authButton) {
+      return;
+    }
+
     var user = getUser();
     if (user) {
-      btn.textContent       = 'Profile';
-      btn.href              = 'profile.html';
-      btn.style.background  = 'transparent';
-      btn.style.color       = 'var(--text)';
-      btn.style.border      = '1px solid var(--border)';
-      btn.style.boxShadow   = 'none';
-      btn.onclick = null;
-    } else {
-      btn.textContent       = 'Sign in';
-      btn.href              = '#';
-      btn.style.background  = 'var(--primary)';
-      btn.style.color       = '#000';
-      btn.style.border      = 'none';
-      btn.style.boxShadow   = '0 0 32px rgba(29,185,84,0.40)';
-      btn.onclick = function (e) { e.preventDefault(); openModal('login'); };
+      authButton.textContent = 'Profile';
+      authButton.href = 'profile.html';
+      authButton.style.background = 'transparent';
+      authButton.style.color = 'var(--text)';
+      authButton.style.border = '1px solid var(--border)';
+      authButton.style.boxShadow = 'none';
+      authButton.onclick = null;
+      return;
     }
+
+    authButton.textContent = 'Sign in';
+    authButton.href = '#';
+    authButton.style.background = 'var(--primary)';
+    authButton.style.color = '#000';
+    authButton.style.border = 'none';
+    authButton.style.boxShadow = '0 0 32px rgba(29,185,84,0.40)';
+    authButton.onclick = function (event) {
+      event.preventDefault();
+      openModal('login');
+    };
   }
 
-  /* ── Init ────────────────────────────────────────────── */
-  function ready(fn) {
-    if (document.readyState !== 'loading') { fn(); }
-    else { document.addEventListener('DOMContentLoaded', fn); }
+  function ready(callback) {
+    if (document.readyState !== 'loading') {
+      callback();
+      return;
+    }
+
+    document.addEventListener('DOMContentLoaded', callback);
   }
 
   ready(function () {

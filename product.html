@@ -79,6 +79,7 @@
     .rc-stars { color: #FFB800; font-size: 0.9rem; margin-bottom: 4px; }
     .rating-card.r-tox .rc-value { color: var(--warn); }
     .rating-card.r-match .rc-value { color: var(--primary); }
+    .auth-hidden { display: none !important; }
 
     /* Score bar in rating card */
     .rc-bar { margin-top: 10px; }
@@ -265,7 +266,7 @@
         <div class="triple-rating">
           <div id="header-user"  class="rating-pill r-user"><span class="r-icon">⭐</span> 4.1</div>
           <div id="header-tox"   class="rating-pill r-tox med"><span class="r-icon">☀️</span> 72</div>
-          <div id="header-match" class="rating-pill r-match"><span class="r-icon">🎯</span> 88%</div>
+          <div id="header-match" class="rating-pill r-match profile-match-ui"><span class="r-icon">🎯</span> 88%</div>
         </div>
       </div>
     </div>
@@ -290,7 +291,7 @@
         </div>
         <div class="rc-sub">By certified professionals</div>
       </div>
-      <div class="rating-card r-match">
+      <div class="rating-card r-match profile-match-ui">
         <div class="rc-icon">🎯</div>
         <div id="match-value" class="rc-value">88%</div>
         <div class="rc-label">Profile Match</div>
@@ -582,7 +583,23 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', loadProduct);
+    function updateProfileMatchVisibility() {
+      var loggedIn = !!(window.HLAuth && HLAuth.isLoggedIn && HLAuth.isLoggedIn());
+      document.querySelectorAll('.profile-match-ui, .r-match').forEach(function (el) {
+        el.classList.toggle('auth-hidden', !loggedIn);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      loadProduct();
+      updateProfileMatchVisibility();
+    });
+
+    var prevAuthChange = window.onAuthChange;
+    window.onAuthChange = function () {
+      if (typeof prevAuthChange === 'function') prevAuthChange();
+      updateProfileMatchVisibility();
+    };
   </script>
 </body>
 </html>

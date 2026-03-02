@@ -224,6 +224,7 @@
     .pc-rating-pill.r-tox.med { color: var(--warn); }
     .pc-rating-pill.r-tox.low { color: var(--accent); }
     .pc-rating-pill.r-match   { color: var(--primary); }
+    .auth-hidden { display: none !important; }
 
     @media (max-width: 768px) {
       .search-layout { grid-template-columns: 1fr; }
@@ -284,7 +285,7 @@
           </div>
         </div>
 
-        <div class="filter-group">
+        <div class="filter-group" id="match-filter-group">
           <h4>Profile Match</h4>
           <div class="range-group">
             <input type="range" min="0" max="100" value="0" id="minMatch" />
@@ -321,7 +322,7 @@
           <select class="sort-select">
             <option>Sort: Best Match</option>
             <option>Sort: Health Score ☀️</option>
-            <option>Sort: Profile Match</option>
+            <option id="sort-profile-match-option">Sort: Profile Match</option>
             <option>Sort: User Rating</option>
           </select>
         </div>
@@ -530,6 +531,23 @@
     }
 
     /* ── Pre-fill from URL ?q= ── */
+    function updateProfileMatchVisibility() {
+      var loggedIn = !!(window.HLAuth && HLAuth.isLoggedIn && HLAuth.isLoggedIn());
+      var matchFilterGroup = document.getElementById('match-filter-group');
+      var sortProfileMatchOption = document.getElementById('sort-profile-match-option');
+
+      if (matchFilterGroup) {
+        matchFilterGroup.classList.toggle('auth-hidden', !loggedIn);
+      }
+      if (sortProfileMatchOption) {
+        sortProfileMatchOption.hidden = !loggedIn;
+      }
+
+      document.querySelectorAll('.pc-rating-pill.r-match').forEach(function (pill) {
+        pill.classList.toggle('auth-hidden', !loggedIn);
+      });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       var params = new URLSearchParams(window.location.search);
       var q = params.get('q');
@@ -537,7 +555,14 @@
         document.getElementById('searchInput').value = q;
         filterProducts();
       }
+      updateProfileMatchVisibility();
     });
+
+    var prevAuthChange = window.onAuthChange;
+    window.onAuthChange = function () {
+      if (typeof prevAuthChange === 'function') prevAuthChange();
+      updateProfileMatchVisibility();
+    };
   </script>
 </body>
 </html>

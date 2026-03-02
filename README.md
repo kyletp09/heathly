@@ -307,12 +307,11 @@ localStorage.clear(); location.reload();
 
 Next:
 no more icons use images of item from internet
+add price
 
 urgent:
 no profile match on product.html & search.html UNLESS LOGGED IN
-
-barcode scananer works but search does not pull up the monster tem with barcode number
-
-profile.html: hover over a recent search and x appears to delete it
+barcode scananer puts barcode number in search bar, but needs to pull up the monster ultra wild passion in search.html
+profile.html: hover over a recent search and x appears to delete it, skin type needs to be deselectable when clicked again.
 
 
