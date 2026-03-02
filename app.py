@@ -1,6 +1,7 @@
 import uuid
 import requests
-from flask import Flask, request, jsonify
+from urllib.parse import urlparse
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -10,6 +11,11 @@ CORS(app)
 # In-memory stores (fine for hackathon)
 profiles = {}
 users = {}  # email -> hashed token (mock)
+
+ALLOWED_IMAGE_HOSTS = {
+    "images.openfoodfacts.org",
+    "images.openbeautyfacts.org",
+}
 
 # ─── Mock Data (fallback when external APIs are unavailable) ───────────────────
 
@@ -51,7 +57,7 @@ MOCK_PRODUCTS = [
         "id": "beauty001",
         "name": "CeraVe Moisturizing Cream",
         "brand": "CeraVe",
-        "image": "",
+        "image": "https://images.openbeautyfacts.org/images/products/333/787/559/7384/front_en.18.400.jpg",
         "category": "beauty",
         "ingredients_text": "water, glycerin, cetearyl alcohol, caprylic/capric triglyceride, behentrimonium methosulfate, ceramide NP, ceramide AP, ceramide EOP, carbomer, sodium lauroyl lactylate, cholesterol, phenoxyethanol, dimethicone, hyaluronic acid",
         "ingredients": [
@@ -67,7 +73,7 @@ MOCK_PRODUCTS = [
         "id": "070847899488",
         "name": "Monster Energy Ultra Wild Passion",
         "brand": "Monster Beverage Corporation",
-        "image": "",
+        "image": "https://images.openfoodfacts.org/images/products/070/847/899/488/front_en.13.400.jpg",
         "category": "food",
         "ingredients_text": "Carbonated Water, Erythritol, Citric Acid, Natural Flavors, Taurine, Sodium Citrate, L-Carnitine L-Tartrate, Caffeine, Sorbic Acid, Benzoic Acid, Niacinamide, Sucralose, Acesulfame Potassium, Salt, D-Glucuronolactone, Inositol, Guarana Extract, Pyridoxine Hydrochloride, Riboflavin, Cyanocobalamin",
         "health_score": 52,
@@ -99,6 +105,25 @@ MOCK_PRODUCTS = [
             {"name": "Caffeine (150mg/can)",  "safety": "caution", "reason": "Over a third of the FDA's 400mg daily max in a single can. Combined with guarana's undisclosed caffeine, actual total may exceed 170mg. Risk of heart palpitations, hypertension, and insomnia."},
             {"name": "Erythritol",            "safety": "caution", "reason": "A 2023 study (Nature Medicine) found elevated erythritol blood levels correlated with increased cardiovascular risk. More research is ongoing, but caution is warranted for high-frequency consumption."},
             {"name": "Acesulfame Potassium",  "safety": "caution", "reason": "Animal studies suggest Ace-K may affect gut microbiome diversity and insulin response. Approved by FDA, but some researchers recommend limiting intake until more human data is available."},
+        ],
+    },
+    {
+        "id": "6937003707909",
+        "name": "Chi Forest Sparkling Pomelo Zest",
+        "brand": "Chi Forest",
+        "image": "https://images.openfoodfacts.org/images/products/693/700/370/7909/front_en.5.400.jpg",
+        "category": "food",
+        "ingredients_text": "carbonated water, erythritol, citric acid, natural flavor, sucralose, acesulfame potassium",
+        "health_score": 80,
+        "user_rating": 4.2,
+        "profile_match": 68,
+        "ingredients": [
+            {"id": "en:carbonated-water", "name": "Carbonated Water", "percent": 92, "safety": "safe", "function": "Base", "detail": "Primary base ingredient in sparkling beverages."},
+            {"id": "en:erythritol", "name": "Erythritol", "percent": 4, "safety": "caution", "function": "Sweetener", "detail": "Low-calorie sweetener; generally tolerated but can cause GI upset at high intake."},
+            {"id": "en:citric-acid", "name": "Citric Acid", "percent": 1, "safety": "safe", "function": "Acidulant", "detail": "Common acidity regulator used in beverages."},
+            {"id": "en:natural-flavor", "name": "Natural Flavor", "percent": 1, "safety": "caution", "function": "Flavoring", "detail": "Broad label term that can represent multiple compounds."},
+            {"id": "en:sucralose", "name": "Sucralose", "percent": 0.05, "safety": "caution", "function": "Sweetener", "detail": "Artificial sweetener; safe by regulation, with mixed long-term evidence."},
+            {"id": "en:acesulfame-k", "name": "Acesulfame Potassium", "percent": 0.05, "safety": "caution", "function": "Sweetener", "detail": "Frequently paired with sucralose to enhance sweetness."},
         ],
     },
     {
@@ -220,6 +245,40 @@ def product(product_id):
         })
     except Exception:
         return jsonify({"error": "Product not found"}), 404
+
+
+@app.route("/image-proxy")
+def image_proxy():
+    image_url = (request.args.get("url") or "").strip()
+    if not image_url:
+        return jsonify({"error": "Missing image url"}), 400
+
+    parsed = urlparse(image_url)
+    if parsed.scheme not in ("http", "https"):
+        return jsonify({"error": "Invalid image url scheme"}), 400
+    if parsed.netloc not in ALLOWED_IMAGE_HOSTS:
+        return jsonify({"error": "Image host not allowed"}), 400
+
+    try:
+        resp = requests.get(
+            image_url,
+            timeout=8,
+            headers={"User-Agent": "HealthlyImageProxy/1.0"},
+        )
+        if resp.status_code != 200:
+            return jsonify({"error": "Image fetch failed"}), 502
+
+        content_type = (resp.headers.get("Content-Type") or "").split(";")[0].strip()
+        if not content_type.startswith("image/"):
+            return jsonify({"error": "URL did not return image content"}), 502
+
+        return Response(
+            resp.content,
+            mimetype=content_type,
+            headers={"Cache-Control": "public, max-age=86400"},
+        )
+    except Exception:
+        return jsonify({"error": "Image proxy request failed"}), 502
 
 
 # ─── Auth ─────────────────────────────────────────────────────────────────────

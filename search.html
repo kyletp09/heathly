@@ -191,6 +191,13 @@
       justify-content: center;
       font-size: 1.8rem;
       margin-bottom: 14px;
+      overflow: hidden;
+    }
+    .pc-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
     .pc-category {
       font-size: 0.65rem;
@@ -220,10 +227,13 @@
       border: 1px solid var(--border);
     }
     .pc-rating-pill.r-user    { color: #FFB800; }
-    .pc-rating-pill.r-tox     { color: var(--primary); }
-    .pc-rating-pill.r-tox.med { color: var(--warn); }
-    .pc-rating-pill.r-tox.low { color: var(--accent); }
+    .pc-rating-pill.r-health     { color: var(--primary); }
+    .pc-rating-pill.r-health.med { color: var(--warn); }
+    .pc-rating-pill.r-health.low { color: var(--accent); }
     .pc-rating-pill.r-match   { color: var(--primary); }
+    .pc-rating-pill.r-price.low { color: var(--accent); }
+    .pc-rating-pill.r-price.mid { color: #FFB800; }
+    .pc-rating-pill.r-price.high { color: #FF7A00; }
     .auth-hidden { display: none !important; }
 
     @media (max-width: 768px) {
@@ -330,13 +340,22 @@
         <div class="product-grid" id="productGrid">
 
           <a href="product.html?id=beauty001&category=beauty" class="product-card" data-name="cerave moisturizing cream" data-cat="skincare">
-            <div class="pc-thumb">🧴</div>
+            <div class="pc-thumb">
+              <img
+                src="https://images.openbeautyfacts.org/images/products/333/787/559/7384/front_en.18.400.jpg"
+                alt="CeraVe Moisturizing Cream"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+                onerror="this.parentNode.textContent='🧴';"
+              />
+            </div>
             <div class="pc-category">Skincare</div>
             <div class="pc-name">CeraVe Moisturizing Cream</div>
             <div class="pc-brand">CeraVe</div>
             <div class="pc-ratings">
               <span class="pc-rating-pill r-user">⭐ 4.1</span>
-              <span class="pc-rating-pill r-tox med">☀️ 72</span>
+              <span class="pc-rating-pill r-health med">☀️ 72</span>
               <span class="pc-rating-pill r-match">🎯 88%</span>
             </div>
           </a>
@@ -348,7 +367,7 @@
             <div class="pc-brand">Neutrogena</div>
             <div class="pc-ratings">
               <span class="pc-rating-pill r-user">⭐ 4.3</span>
-              <span class="pc-rating-pill r-tox low">☀️ 44</span>
+              <span class="pc-rating-pill r-health low">☀️ 44</span>
               <span class="pc-rating-pill r-match">🎯 71%</span>
             </div>
           </a>
@@ -360,7 +379,7 @@
             <div class="pc-brand">KIND</div>
             <div class="pc-ratings">
               <span class="pc-rating-pill r-user">⭐ 4.6</span>
-              <span class="pc-rating-pill r-tox">☀️ 88</span>
+              <span class="pc-rating-pill r-health">☀️ 88</span>
               <span class="pc-rating-pill r-match">🎯 92%</span>
             </div>
           </a>
@@ -372,7 +391,7 @@
             <div class="pc-brand">Garden of Life</div>
             <div class="pc-ratings">
               <span class="pc-rating-pill r-user">⭐ 4.7</span>
-              <span class="pc-rating-pill r-tox">☀️ 95</span>
+              <span class="pc-rating-pill r-health">☀️ 95</span>
               <span class="pc-rating-pill r-match">🎯 97%</span>
             </div>
           </a>
@@ -384,7 +403,7 @@
             <div class="pc-brand">The Ordinary</div>
             <div class="pc-ratings">
               <span class="pc-rating-pill r-user">⭐ 4.5</span>
-              <span class="pc-rating-pill r-tox">☀️ 91</span>
+              <span class="pc-rating-pill r-health">☀️ 91</span>
               <span class="pc-rating-pill r-match">🎯 94%</span>
             </div>
           </a>
@@ -396,7 +415,7 @@
             <div class="pc-brand">CLIF</div>
             <div class="pc-ratings">
               <span class="pc-rating-pill r-user">⭐ 4.0</span>
-              <span class="pc-rating-pill r-tox med">☀️ 61</span>
+              <span class="pc-rating-pill r-health med">☀️ 61</span>
               <span class="pc-rating-pill r-match">🎯 74%</span>
             </div>
           </a>
@@ -408,7 +427,7 @@
             <div class="pc-brand">La Roche-Posay</div>
             <div class="pc-ratings">
               <span class="pc-rating-pill r-user">⭐ 4.4</span>
-              <span class="pc-rating-pill r-tox">☀️ 84</span>
+              <span class="pc-rating-pill r-health">☀️ 84</span>
               <span class="pc-rating-pill r-match">🎯 89%</span>
             </div>
           </a>
@@ -420,7 +439,7 @@
             <div class="pc-brand">Seventh Generation</div>
             <div class="pc-ratings">
               <span class="pc-rating-pill r-user">⭐ 4.2</span>
-              <span class="pc-rating-pill r-tox">☀️ 87</span>
+              <span class="pc-rating-pill r-health">☀️ 87</span>
               <span class="pc-rating-pill r-match">🎯 90%</span>
             </div>
           </a>
@@ -432,7 +451,7 @@
             <div class="pc-brand">Olly</div>
             <div class="pc-ratings">
               <span class="pc-rating-pill r-user">⭐ 4.3</span>
-              <span class="pc-rating-pill r-tox med">☀️ 67</span>
+              <span class="pc-rating-pill r-health med">☀️ 67</span>
               <span class="pc-rating-pill r-match">🎯 80%</span>
             </div>
           </a>
@@ -444,7 +463,7 @@
             <div class="pc-brand">Maybelline</div>
             <div class="pc-ratings">
               <span class="pc-rating-pill r-user">⭐ 4.1</span>
-              <span class="pc-rating-pill r-tox low">☀️ 38</span>
+              <span class="pc-rating-pill r-health low">☀️ 38</span>
               <span class="pc-rating-pill r-match">🎯 62%</span>
             </div>
           </a>
@@ -456,7 +475,7 @@
             <div class="pc-brand">Trader Joe's</div>
             <div class="pc-ratings">
               <span class="pc-rating-pill r-user">⭐ 4.5</span>
-              <span class="pc-rating-pill r-tox">☀️ 93</span>
+              <span class="pc-rating-pill r-health">☀️ 93</span>
               <span class="pc-rating-pill r-match">🎯 96%</span>
             </div>
           </a>
@@ -468,20 +487,50 @@
             <div class="pc-brand">Vanicream</div>
             <div class="pc-ratings">
               <span class="pc-rating-pill r-user">⭐ 4.6</span>
-              <span class="pc-rating-pill r-tox">☀️ 91</span>
+              <span class="pc-rating-pill r-health">☀️ 91</span>
               <span class="pc-rating-pill r-match">🎯 94%</span>
             </div>
           </a>
 
           <a href="product.html?id=070847899488&category=food" class="product-card" data-name="monster energy ultra wild passion" data-cat="food">
-            <div class="pc-thumb">🥤</div>
+            <div class="pc-thumb">
+              <img
+                src="https://images.openfoodfacts.org/images/products/070/847/899/488/front_en.13.400.jpg"
+                alt="Monster Energy Ultra Wild Passion"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+                onerror="this.parentNode.textContent='🥤';"
+              />
+            </div>
             <div class="pc-category">Food & Drink</div>
             <div class="pc-name">Monster Energy Ultra Wild Passion</div>
             <div class="pc-brand">Monster Beverage Corporation</div>
             <div class="pc-ratings">
               <span class="pc-rating-pill r-user">⭐ 4.3</span>
-              <span class="pc-rating-pill r-tox med">☀️ 52</span>
+              <span class="pc-rating-pill r-health med">☀️ 52</span>
               <span class="pc-rating-pill r-match">🎯 40%</span>
+            </div>
+          </a>
+
+          <a href="product.html?id=6937003707909&category=food" class="product-card" data-name="chi forest sparkling pomelo zest" data-cat="food">
+            <div class="pc-thumb">
+              <img
+                src="https://images.openfoodfacts.org/images/products/693/700/370/7909/front_en.5.400.jpg"
+                alt="Chi Forest Sparkling Pomelo Zest"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+                onerror="this.parentNode.textContent='🥤';"
+              />
+            </div>
+            <div class="pc-category">Food & Drink</div>
+            <div class="pc-name">Chi Forest Sparkling Pomelo Zest</div>
+            <div class="pc-brand">Chi Forest</div>
+            <div class="pc-ratings">
+              <span class="pc-rating-pill r-user">⭐ 4.2</span>
+              <span class="pc-rating-pill r-health">☀️ 80</span>
+              <span class="pc-rating-pill r-match">🎯 68%</span>
             </div>
           </a>
 
@@ -530,6 +579,78 @@
         'Showing ' + visible + ' result' + (visible !== 1 ? 's' : '');
     }
 
+    function toSlug(s) {
+      return String(s || '').toLowerCase().trim().replace(/\s+/g, ' ');
+    }
+
+    function injectRealItemImages() {
+      var imageMap = {
+        'monster energy ultra wild passion': 'https://images.openfoodfacts.org/images/products/070/847/899/488/front_en.jpg',
+        'chi forest sparkling pomelo zest': 'https://images.openfoodfacts.org/images/products/693/700/370/7909/front_en.jpg',
+        'cerave moisturizing cream': 'https://images.openbeautyfacts.org/images/products/333/787/559/7384/front_en.jpg'
+      };
+
+      document.querySelectorAll('.product-card').forEach(function (card) {
+        var name = toSlug(card.dataset.name);
+        var imageUrl = imageMap[name];
+        if (!imageUrl) return;
+        var thumb = card.querySelector('.pc-thumb');
+        if (!thumb || thumb.querySelector('img')) return;
+        var fallback = (card.dataset.cat === 'beauty' || card.dataset.cat === 'skincare') ? '🧴' : '🥤';
+        var itemName = (card.querySelector('.pc-name') || { textContent: 'Product image' }).textContent;
+        var proxyUrl = 'http://localhost:5001/image-proxy?url=' + encodeURIComponent(imageUrl);
+        var img = document.createElement('img');
+        var triedDirect = false;
+
+        img.alt = itemName;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.referrerPolicy = 'no-referrer';
+        img.onerror = function () {
+          if (!triedDirect) {
+            triedDirect = true;
+            img.src = imageUrl;
+            return;
+          }
+          thumb.textContent = fallback;
+        };
+
+        thumb.innerHTML = '';
+        thumb.appendChild(img);
+        img.src = proxyUrl;
+      });
+    }
+
+    function injectPricePills() {
+      var priceMap = {
+        'cerave moisturizing cream': { label: '$14.99', tier: 'mid' },
+        'neutrogena sunscreen spf 50': { label: '$10.49', tier: 'low' },
+        'kind almond dark chocolate bar': { label: '$1.89', tier: 'low' },
+        'garden of life vitamin d3': { label: '$19.99', tier: 'high' },
+        'the ordinary niacinamide serum': { label: '$7.80', tier: 'low' },
+        'clif bar chocolate chip': { label: '$1.79', tier: 'low' },
+        'la roche posay cleanser': { label: '$16.99', tier: 'mid' },
+        'seventh generation dish soap': { label: '$4.99', tier: 'low' },
+        'olly sleep melatonin gummies': { label: '$15.49', tier: 'mid' },
+        'maybelline fit me foundation': { label: '$9.99', tier: 'low' },
+        'trader joes cauliflower gnocchi': { label: '$3.49', tier: 'low' },
+        'vanicream moisturizing cream sensitive skin': { label: '$13.49', tier: 'mid' },
+        'monster energy ultra wild passion': { label: '$2.79', tier: 'mid' },
+        'chi forest sparkling pomelo zest': { label: '$2.29', tier: 'low' }
+      };
+
+      document.querySelectorAll('.product-card').forEach(function (card) {
+        var ratings = card.querySelector('.pc-ratings');
+        if (!ratings || ratings.querySelector('.r-price')) return;
+        var key = toSlug(card.dataset.name);
+        var price = priceMap[key] || { label: '$--', tier: 'mid' };
+        var span = document.createElement('span');
+        span.className = 'pc-rating-pill r-price ' + price.tier;
+        span.textContent = '💲 ' + price.label;
+        ratings.appendChild(span);
+      });
+    }
+
     /* ── Pre-fill from URL ?q= ── */
     function updateProfileMatchVisibility() {
       var loggedIn = !!(window.HLAuth && HLAuth.isLoggedIn && HLAuth.isLoggedIn());
@@ -551,8 +672,12 @@
     document.addEventListener('DOMContentLoaded', function () {
       var params = new URLSearchParams(window.location.search);
       var q = params.get('q');
+      injectRealItemImages();
+      injectPricePills();
       if (q) {
         document.getElementById('searchInput').value = q;
+        filterProducts();
+      } else {
         filterProducts();
       }
       updateProfileMatchVisibility();
@@ -566,3 +691,4 @@
   </script>
 </body>
 </html>
+

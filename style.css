@@ -149,9 +149,9 @@ section { padding: 96px 6%; }
 }
 .rating-pill .r-icon { font-size: 0.85rem; }
 .rating-pill.r-user    { color: #FF9800; }
-.rating-pill.r-tox     { color: var(--primary); }
-.rating-pill.r-tox.med { color: var(--warn); }
-.rating-pill.r-tox.low { color: var(--accent); }
+.rating-pill.r-health     { color: var(--primary); }
+.rating-pill.r-health.med { color: var(--warn); }
+.rating-pill.r-health.low { color: var(--accent); }
 .rating-pill.r-match   { color: var(--primary); }
 
 /* ── NAV ── */
@@ -234,3 +234,4 @@ footer p + p { margin-top: 6px; }
   section { padding: 64px 5%; }
   .nav-links { display: none; }
 }
+

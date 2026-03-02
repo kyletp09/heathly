@@ -31,6 +31,13 @@
       justify-content: center;
       font-size: 3rem;
       flex-shrink: 0;
+      overflow: hidden;
+    }
+    .product-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
     .product-meta .cat-badge {
       display: inline-block;
@@ -63,6 +70,15 @@
       gap: 16px;
       margin-bottom: 40px;
     }
+    .triple-block.logged-out {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .product-meta.logged-out .triple-rating {
+      justify-content: center;
+    }
     .rating-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -77,7 +93,7 @@
     .rating-card .rc-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
     .rating-card .rc-sub { font-size: 0.75rem; color: var(--muted); margin-top: 6px; }
     .rc-stars { color: #FFB800; font-size: 0.9rem; margin-bottom: 4px; }
-    .rating-card.r-tox .rc-value { color: var(--warn); }
+    .rating-card.r-health .rc-value { color: var(--warn); }
     .rating-card.r-match .rc-value { color: var(--primary); }
     .auth-hidden { display: none !important; }
 
@@ -265,7 +281,7 @@
         <div id="product-brand" class="brand">by CeraVe · 14 ingredients</div>
         <div class="triple-rating">
           <div id="header-user"  class="rating-pill r-user"><span class="r-icon">⭐</span> 4.1</div>
-          <div id="header-tox"   class="rating-pill r-tox med"><span class="r-icon">☀️</span> 72</div>
+          <div id="header-health"   class="rating-pill r-health med"><span class="r-icon">☀️</span> 72</div>
           <div id="header-match" class="rating-pill r-match profile-match-ui"><span class="r-icon">🎯</span> 88%</div>
         </div>
       </div>
@@ -280,7 +296,7 @@
         <div class="rc-label">User Rating</div>
         <div class="rc-sub">1,243 community reviews</div>
       </div>
-      <div class="rating-card r-tox">
+      <div class="rating-card r-health">
         <div class="rc-icon">☀️</div>
         <div id="tox-value" class="rc-value">72</div>
         <div class="rc-label">Health Score ☀️</div>
@@ -392,7 +408,7 @@
           <div class="alt-name">Vanicream Moisturizing Cream</div>
           <div class="alt-brand">Vanicream</div>
           <div class="triple-rating" style="margin-bottom:10px">
-            <div class="rating-pill r-tox" style="font-size:0.72rem;padding:3px 9px"><span>☣️</span> 91</div>
+            <div class="rating-pill r-health" style="font-size:0.72rem;padding:3px 9px"><span>☣️</span> 91</div>
             <div class="rating-pill r-match" style="font-size:0.72rem;padding:3px 9px"><span>🎯</span> 94%</div>
           </div>
           <div class="alt-better">↑ 19 pts cleaner · Better profile match</div>
@@ -402,7 +418,7 @@
           <div class="alt-name">First Aid Beauty Ultra Repair Cream</div>
           <div class="alt-brand">First Aid Beauty</div>
           <div class="triple-rating" style="margin-bottom:10px">
-            <div class="rating-pill r-tox" style="font-size:0.72rem;padding:3px 9px"><span>☣️</span> 85</div>
+            <div class="rating-pill r-health" style="font-size:0.72rem;padding:3px 9px"><span>☣️</span> 85</div>
             <div class="rating-pill r-match" style="font-size:0.72rem;padding:3px 9px"><span>🎯</span> 91%</div>
           </div>
           <div class="alt-better">↑ 13 pts cleaner · Fragrance-free</div>
@@ -412,7 +428,7 @@
           <div class="alt-name">Weleda Skin Food</div>
           <div class="alt-brand">Weleda</div>
           <div class="triple-rating" style="margin-bottom:10px">
-            <div class="rating-pill r-tox" style="font-size:0.72rem;padding:3px 9px"><span>☣️</span> 88</div>
+            <div class="rating-pill r-health" style="font-size:0.72rem;padding:3px 9px"><span>☣️</span> 88</div>
             <div class="rating-pill r-match" style="font-size:0.72rem;padding:3px 9px"><span>🎯</span> 89%</div>
           </div>
           <div class="alt-better">↑ 16 pts cleaner · Natural formula</div>
@@ -530,7 +546,7 @@
       document.title = (p.name || 'Product') + ' — Healthly';
 
       /* Thumb + badge */
-      document.getElementById('product-thumb').textContent = category === 'beauty' ? '🧴' : '🥤';
+      setProductThumb(p, category);
       document.getElementById('cat-badge').textContent     = category === 'beauty' ? 'Beauty' : 'Food & Drink';
 
       /* Name + brand */
@@ -549,7 +565,7 @@
       document.getElementById('match-value').textContent       = match + '%';
       document.getElementById('match-bar').style.width         = match + '%';
       document.getElementById('header-user').innerHTML  = '<span class="r-icon">⭐</span> ' + user;
-      document.getElementById('header-tox').innerHTML   = '<span class="r-icon">☀️</span> ' + tox;
+      document.getElementById('header-health').innerHTML   = '<span class="r-icon">☀️</span> ' + tox;
       document.getElementById('header-match').innerHTML = '<span class="r-icon">🎯</span> ' + match + '%';
 
       /* Flagged ingredients */
@@ -583,8 +599,46 @@
       }
     }
 
+    function setProductThumb(product, category) {
+      var thumb = document.getElementById('product-thumb');
+      var fallback = category === 'beauty' ? '🧴' : '🥤';
+      var imageUrl = product && product.image ? String(product.image).trim() : '';
+
+      if (!thumb) return;
+      if (!imageUrl) {
+        thumb.textContent = fallback;
+        return;
+      }
+      var proxyUrl = 'http://localhost:5001/image-proxy?url=' + encodeURIComponent(imageUrl);
+      var img = document.createElement('img');
+      var triedDirect = false;
+
+      img.alt = product && product.name ? product.name : 'Product image';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.referrerPolicy = 'no-referrer';
+      img.onerror = function () {
+        if (!triedDirect) {
+          triedDirect = true;
+          img.src = imageUrl;
+          return;
+        }
+        thumb.textContent = fallback;
+      };
+
+      thumb.innerHTML = '';
+      thumb.appendChild(img);
+      img.src = proxyUrl;
+    }
+
     function updateProfileMatchVisibility() {
       var loggedIn = !!(window.HLAuth && HLAuth.isLoggedIn && HLAuth.isLoggedIn());
+      var tripleBlock = document.querySelector('.triple-block');
+      var meta = document.querySelector('.product-meta');
+
+      if (tripleBlock) tripleBlock.classList.toggle('logged-out', !loggedIn);
+      if (meta) meta.classList.toggle('logged-out', !loggedIn);
+
       document.querySelectorAll('.profile-match-ui, .r-match').forEach(function (el) {
         el.classList.toggle('auth-hidden', !loggedIn);
       });
@@ -603,3 +657,4 @@
   </script>
 </body>
 </html>
+
