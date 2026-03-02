@@ -16,12 +16,12 @@
     .hero {
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
       padding: 120px 6% 80px;
-      gap: 64px;
     }
-    .hero-content { flex: 1; max-width: 600px; }
-    .hero-visual  { flex: 0 0 380px; }
+    .hero-content { width: 100%; max-width: 700px; }
 
     .hero-eyebrow {
       display: inline-flex;
@@ -56,7 +56,7 @@
       font-size: 1.05rem;
       color: var(--muted-light);
       margin-bottom: 36px;
-      max-width: 480px;
+      max-width: 580px;
       line-height: 1.7;
     }
 
@@ -328,9 +328,10 @@
       border: 1px solid var(--border);
       border-radius: 20px;
       padding: 18px 22px 14px;
-      max-width: 520px;
+      width: 100%;
       box-shadow: 0 2px 20px rgba(0,0,0,0.05);
       margin-bottom: 14px;
+      box-sizing: border-box;
     }
     .scan-textarea {
       width: 100%;
@@ -409,28 +410,26 @@
     .toggle-pill-wrap input:checked + .hl-toggle { background: var(--primary); }
     .toggle-pill-wrap input:checked + .hl-toggle::after { left: 16px; }
 
-    /* History section */
-    #history-section { background: var(--bg-elevated); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 48px 6%; }
-    .history-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    /* History dropdown (below scan card, logged-in focus only) */
+    #history-section { padding: 4px 0 8px; }
+    .history-chips { display: flex; flex-wrap: wrap; gap: 6px; }
     .history-chip {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 9px 18px;
+      gap: 5px;
+      padding: 5px 11px;
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-pill);
-      font-size: 0.85rem;
-      color: var(--text);
+      font-size: 0.78rem;
+      color: var(--muted);
       text-decoration: none;
-      transition: border-color 0.2s, background 0.2s;
+      transition: border-color 0.2s, color 0.2s;
     }
-    .history-chip:hover { border-color: var(--primary); background: var(--primary-dim); }
+    .history-chip:hover { border-color: var(--primary); color: var(--text); }
 
     @media (max-width: 900px) {
-      .hero { flex-direction: column; text-align: center; padding-top: 100px; }
-      .hero-visual { width: 100%; max-width: 380px; margin: 0 auto; }
-      .scan-input-card { max-width: 100%; }
+      .hero { padding-top: 100px; }
     }
   </style>
 </head>
@@ -491,49 +490,6 @@
       </div>
     </div>
 
-    <div class="hero-visual">
-      <div class="scan-card">
-        <div class="scan-card-header">
-          <div class="scan-icon">🧴</div>
-          <div>
-            <div class="scan-product-name">CeraVe Moisturizer</div>
-            <div class="scan-product-meta">Skincare · 14 ingredients</div>
-          </div>
-        </div>
-        <div class="ingredient-rows">
-          <div class="ingredient-row safe">
-            <span>Ceramide NP</span>
-            <span class="tag tag-safe">Safe</span>
-          </div>
-          <div class="ingredient-row safe">
-            <span>Hyaluronic Acid</span>
-            <span class="tag tag-safe">Safe</span>
-          </div>
-          <div class="ingredient-row caution">
-            <span>Cetearyl Alcohol</span>
-            <span class="tag tag-caution">Caution</span>
-          </div>
-          <div class="ingredient-row avoid">
-            <span>Methylparaben</span>
-            <span class="tag tag-avoid">Avoid</span>
-          </div>
-        </div>
-        <div class="scan-score">
-          <div class="scan-score-label">
-            <span>Toxicity Score</span>
-            <span>72 / 100</span>
-          </div>
-          <div class="score-track">
-            <div class="score-fill medium" style="width:72%"></div>
-          </div>
-        </div>
-        <div class="triple-rating" style="margin-top:16px">
-          <div class="rating-pill r-user"><span class="r-icon">⭐</span> 4.1</div>
-          <div class="rating-pill r-tox med"><span class="r-icon">☣️</span> 72</div>
-          <div class="rating-pill r-match"><span class="r-icon">🎯</span> 88%</div>
-        </div>
-      </div>
-    </div>
   </section>
 
   <!-- ── STATS ── -->
