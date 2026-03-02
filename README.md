@@ -260,12 +260,6 @@ Here's a full pre-push test checklist based on everything built so far:
 landing:
 - add camera icon button to open camera for barcode scanning. requests for webcam access and works
 
-- move recent scans up, right below search bar
-
-- no password verification. how to enable?
-
-- provide an md with all the pages/current products available and a roadmap of the website
-
 
 Auth flow
  Open healthly.html — nav shows "Sign in" (green)
@@ -276,6 +270,7 @@ Auth flow
  Log in tab: enter same email, any password → logs in
  Navigate to about.html, search.html, profile.html — all show "Profile" in nav when logged in
  Go to profile.html → click Log out → redirects to healthly.html, nav shows "Sign in" again
+
 Landing page search card
  Scan card shows textarea with placeholder "Paste ingredients or search"
  Type something → press Enter → navigates to search.html?q=...
@@ -312,3 +307,12 @@ localStorage.clear(); location.reload();
 
 Next:
 no more icons use images of item from internet
+
+urgent:
+no profile match on product.html & search.html UNLESS LOGGED IN
+
+barcode scananer works but search does not pull up the monster tem with barcode number
+
+profile.html: hover over a recent search and x appears to delete it
+
+
