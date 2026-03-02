@@ -733,12 +733,39 @@
     /* ── Barcode scan ── */
     var cameraStream = null, cameraInterval = null, cameraQuagga = false;
 
+    function barcodeCandidates(rawCode) {
+      var raw = String(rawCode || '').trim();
+      var digits = raw.replace(/\D/g, '');
+      var out = [];
+
+      function pushUnique(v) {
+        if (v && out.indexOf(v) === -1) out.push(v);
+      }
+
+      pushUnique(raw);
+      pushUnique(digits);
+
+      /* Common scanner variance:
+         - UPC-A can come as EAN-13 with a leading 0
+         - Some readers include wrapper digits around UPC */
+      if (digits.length === 13 && digits.charAt(0) === '0') pushUnique(digits.slice(1));
+      if (digits.length === 14 && digits.charAt(0) === '0') pushUnique(digits.slice(1, 13));
+      if (digits.length > 12) pushUnique(digits.slice(-12));
+
+      return out;
+    }
+
     function barcodeToSearchQuery(rawCode) {
-      var code = String(rawCode || '').trim();
+      var candidates = barcodeCandidates(rawCode);
       var map = {
         '070847899488': 'monster energy ultra wild passion'
       };
-      return map[code] || code;
+
+      for (var i = 0; i < candidates.length; i += 1) {
+        if (map[candidates[i]]) return map[candidates[i]];
+      }
+
+      return candidates[0] || '';
     }
 
     function goToSearchFromBarcode(rawCode) {
