@@ -773,7 +773,7 @@
           var codes = await bd.detect(img);
           if (codes.length) {
             var raw = codes[0].rawValue;
-            var url = 'search.html?q=' + encodeURIComponent(raw);
+            var url = 'product.html?id=' + encodeURIComponent(raw) + '&category=food';
             HLAuth.addToHistory({ label: 'Barcode: ' + raw, url: url });
             window.location.href = url;
             return;
@@ -816,7 +816,7 @@
             if (codes.length) {
               var raw = codes[0].rawValue;
               closeCameraScanner();
-              var url = 'search.html?q=' + encodeURIComponent(raw);
+              var url = 'product.html?id=' + encodeURIComponent(raw) + '&category=food';
               HLAuth.addToHistory({ label: 'Barcode: ' + raw, url: url });
               window.location.href = url;
             }
@@ -844,7 +844,7 @@
           var code = result.codeResult.code;
           if (!code) return;
           closeCameraScanner();
-          var url = 'search.html?q=' + encodeURIComponent(code);
+          var url = 'product.html?id=' + encodeURIComponent(code) + '&category=food';
           HLAuth.addToHistory({ label: 'Barcode: ' + code, url: url });
           window.location.href = url;
         });

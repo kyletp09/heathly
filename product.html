@@ -249,7 +249,7 @@
       <li><a href="healthly.html">Home</a></li>
       <li><a href="search.html">Search</a></li>
       <li><a href="about.html">About</a></li>
-      <li><a href="search.html" class="btn-primary" style="padding:10px 22px;font-size:0.85rem">Start Scanning</a></li>
+      <li><a id="nav-auth-btn" href="#" class="btn-primary" style="padding:10px 22px;font-size:0.85rem">Sign in</a></li>
     </ul>
   </nav>
 
@@ -257,15 +257,15 @@
 
     <!-- Product Header -->
     <div class="product-header">
-      <div class="product-thumb">🧴</div>
+      <div id="product-thumb" class="product-thumb">🧴</div>
       <div class="product-meta">
-        <span class="cat-badge">Skincare</span>
-        <h1>CeraVe Moisturizing Cream</h1>
-        <div class="brand">by CeraVe · 14 ingredients</div>
+        <span id="cat-badge" class="cat-badge">Skincare</span>
+        <h1 id="product-name-h1">CeraVe Moisturizing Cream</h1>
+        <div id="product-brand" class="brand">by CeraVe · 14 ingredients</div>
         <div class="triple-rating">
-          <div class="rating-pill r-user"><span class="r-icon">⭐</span> 4.1</div>
-          <div class="rating-pill r-tox med"><span class="r-icon">☣️</span> 72</div>
-          <div class="rating-pill r-match"><span class="r-icon">🎯</span> 88%</div>
+          <div id="header-user"  class="rating-pill r-user"><span class="r-icon">⭐</span> 4.1</div>
+          <div id="header-tox"   class="rating-pill r-tox med"><span class="r-icon">☣️</span> 72</div>
+          <div id="header-match" class="rating-pill r-match"><span class="r-icon">🎯</span> 88%</div>
         </div>
       </div>
     </div>
@@ -275,28 +275,28 @@
       <div class="rating-card">
         <div class="rc-icon">⭐</div>
         <div class="rc-stars">★★★★☆</div>
-        <div class="rc-value" style="color:#FFB800">4.1</div>
+        <div id="user-rating-value" class="rc-value" style="color:#FFB800">4.1</div>
         <div class="rc-label">User Rating</div>
         <div class="rc-sub">1,243 community reviews</div>
       </div>
       <div class="rating-card r-tox">
         <div class="rc-icon">☣️</div>
-        <div class="rc-value">72</div>
+        <div id="tox-value" class="rc-value">72</div>
         <div class="rc-label">Toxicity Score</div>
         <div class="rc-bar">
           <div class="score-track">
-            <div class="score-fill medium" style="width:72%"></div>
+            <div id="tox-bar" class="score-fill medium" style="width:72%"></div>
           </div>
         </div>
         <div class="rc-sub">By certified professionals</div>
       </div>
       <div class="rating-card r-match">
         <div class="rc-icon">🎯</div>
-        <div class="rc-value">88%</div>
+        <div id="match-value" class="rc-value">88%</div>
         <div class="rc-label">Profile Match</div>
         <div class="rc-bar">
           <div class="score-track">
-            <div class="score-fill high" style="width:88%"></div>
+            <div id="match-bar" class="score-fill high" style="width:88%"></div>
           </div>
         </div>
         <div class="rc-sub">Based on your health profile</div>
@@ -304,9 +304,9 @@
     </div>
 
     <!-- Flagged Ingredients -->
-    <div class="flagged-section">
-      <h2>⚠️ Flagged Ingredients (2)</h2>
-      <div class="flagged-list">
+    <div id="flagged-section" class="flagged-section">
+      <h2 id="flagged-title">⚠️ Flagged Ingredients (2)</h2>
+      <div id="flagged-list" class="flagged-list">
         <div class="flagged-item">
           <span class="tag tag-avoid" style="flex-shrink:0">Avoid</span>
           <div>
@@ -327,7 +327,7 @@
     <!-- Ingredient List -->
     <div class="ingredient-section">
       <h2>All Ingredients</h2>
-      <div class="ingredient-table">
+      <div id="ingredient-table" class="ingredient-table">
 
         <div class="ing-row safe" onclick="toggleDetail(this)">
           <span class="ing-name">Ceramide NP</span>
@@ -485,14 +485,104 @@
     <p>© 2026 Healthly · Built with love at HOTH 13</p>
   </footer>
 
+  <script src="auth.js"></script>
   <script>
+    var BACKEND = 'http://localhost:5001';
+
     function toggleDetail(row) {
       row.classList.toggle('expanded');
-      const detail = row.nextElementSibling;
-      if (detail && detail.classList.contains('ing-detail')) {
-        detail.classList.toggle('open');
+      var detail = row.nextElementSibling;
+      if (detail && detail.classList.contains('ing-detail')) detail.classList.toggle('open');
+    }
+
+    function esc(s) {
+      if (!s) return '';
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+    function sc(safety) {
+      if (!safety) return 'safe';
+      var s = safety.toLowerCase();
+      return (s === 'avoid' || s === 'caution') ? s : 'safe';
+    }
+
+    async function loadProduct() {
+      var params   = new URLSearchParams(window.location.search);
+      var id       = params.get('id');
+      var category = params.get('category') || 'food';
+      if (!id) return; /* no URL param — show default static CeraVe content */
+
+      document.getElementById('product-name-h1').textContent = 'Loading…';
+      try {
+        var resp = await fetch(BACKEND + '/product/' + encodeURIComponent(id) + '?category=' + category);
+        var p    = await resp.json();
+        if (p.error) throw new Error(p.error);
+        renderProduct(p, category);
+      } catch (e) {
+        document.getElementById('product-name-h1').textContent = 'Product not found';
+        document.getElementById('product-brand').textContent   = 'Barcode: ' + id;
+        document.getElementById('flagged-section').style.display = 'none';
       }
     }
+
+    function renderProduct(p, category) {
+      document.title = (p.name || 'Product') + ' — Healthly';
+
+      /* Thumb + badge */
+      document.getElementById('product-thumb').textContent = category === 'beauty' ? '🧴' : '🥤';
+      document.getElementById('cat-badge').textContent     = category === 'beauty' ? 'Beauty' : 'Food & Drink';
+
+      /* Name + brand */
+      var ingCount = p.ingredients ? p.ingredients.length : 0;
+      document.getElementById('product-name-h1').textContent = p.name || 'Unknown Product';
+      document.getElementById('product-brand').textContent   = 'by ' + (p.brand || 'Unknown') + ' · ' + ingCount + ' ingredients';
+
+      /* Scores */
+      var tox   = p.toxicity_score  !== undefined ? p.toxicity_score  : 72;
+      var user  = p.user_rating     !== undefined ? p.user_rating     : 4.1;
+      var match = p.profile_match   !== undefined ? p.profile_match   : 88;
+
+      document.getElementById('user-rating-value').textContent = user;
+      document.getElementById('tox-value').textContent         = tox;
+      document.getElementById('tox-bar').style.width           = tox + '%';
+      document.getElementById('match-value').textContent       = match + '%';
+      document.getElementById('match-bar').style.width         = match + '%';
+      document.getElementById('header-user').innerHTML  = '<span class="r-icon">⭐</span> ' + user;
+      document.getElementById('header-tox').innerHTML   = '<span class="r-icon">☣️</span> ' + tox;
+      document.getElementById('header-match').innerHTML = '<span class="r-icon">🎯</span> ' + match + '%';
+
+      /* Flagged ingredients */
+      var flagged = p.flagged || [];
+      if (flagged.length) {
+        document.getElementById('flagged-title').textContent = '⚠️ Flagged Ingredients (' + flagged.length + ')';
+        document.getElementById('flagged-list').innerHTML = flagged.map(function (f) {
+          var cls = sc(f.safety);
+          return '<div class="flagged-item">' +
+            '<span class="tag tag-' + cls + '" style="flex-shrink:0">' + cap(cls) + '</span>' +
+            '<div><div class="fi-name">' + esc(f.name) + '</div>' +
+            '<div class="fi-why">' + esc(f.reason) + '</div></div></div>';
+        }).join('');
+        document.getElementById('flagged-section').style.display = '';
+      } else {
+        document.getElementById('flagged-section').style.display = 'none';
+      }
+
+      /* Ingredient list */
+      var ings = p.ingredients || [];
+      if (ings.length) {
+        document.getElementById('ingredient-table').innerHTML = ings.map(function (ing) {
+          var cls = sc(ing.safety);
+          return '<div class="ing-row ' + cls + '" onclick="toggleDetail(this)">' +
+            '<span class="ing-name">' + esc(ing.name) + '</span>' +
+            '<span class="ing-function">' + esc(ing.function || '') + '</span>' +
+            '<span class="tag tag-' + cls + '">' + cap(cls) + '</span>' +
+            '<span class="expand-icon">▼</span></div>' +
+            '<div class="ing-detail">' + esc(ing.detail || '') + '</div>';
+        }).join('');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadProduct);
   </script>
 </body>
 </html>

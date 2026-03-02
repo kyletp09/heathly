@@ -64,6 +64,44 @@ MOCK_PRODUCTS = [
         ],
     },
     {
+        "id": "070847899488",
+        "name": "Monster Energy Ultra Wild Passion",
+        "brand": "Monster Beverage Corporation",
+        "image": "",
+        "category": "food",
+        "ingredients_text": "Carbonated Water, Erythritol, Citric Acid, Natural Flavors, Taurine, Sodium Citrate, L-Carnitine L-Tartrate, Caffeine, Sorbic Acid, Benzoic Acid, Niacinamide, Sucralose, Acesulfame Potassium, Salt, D-Glucuronolactone, Inositol, Guarana Extract, Pyridoxine Hydrochloride, Riboflavin, Cyanocobalamin",
+        "toxicity_score": 52,
+        "user_rating": 4.3,
+        "profile_match": 40,
+        "ingredients": [
+            {"id": "en:water",           "name": "Carbonated Water",         "percent": 87,  "safety": "safe",    "function": "Base",          "detail": "Water infused with CO₂. The base of all carbonated drinks. Completely safe."},
+            {"id": "en:erythritol",      "name": "Erythritol",               "percent": 4,   "safety": "caution", "function": "Sweetener",     "detail": "Sugar alcohol with near-zero calories and low glycemic impact. Generally well-tolerated, but high doses (>50g) can cause digestive discomfort. Recent studies (2023) suggest high blood levels may be associated with cardiovascular risk — more research ongoing."},
+            {"id": "en:citric-acid",     "name": "Citric Acid",              "percent": 0.8, "safety": "safe",    "function": "Acidulant",     "detail": "Natural acid found in citrus fruits. Used as a flavor enhancer and pH regulator. Generally safe."},
+            {"id": "en:natural-flavors", "name": "Natural Flavors",          "percent": 0.5, "safety": "caution", "function": "Flavoring",     "detail": "An umbrella term for hundreds of compounds. No disclosure requirement. Source and safety vary widely."},
+            {"id": "en:taurine",         "name": "Taurine (1000mg)",         "percent": 0.4, "safety": "caution", "function": "Amino Acid",    "detail": "Naturally found in meat and fish. At 1000mg per can, long-term effects of high supplemental doses are not fully established."},
+            {"id": "en:sodium-citrate",  "name": "Sodium Citrate",           "percent": 0.3, "safety": "safe",    "function": "Buffer",        "detail": "Sodium salt of citric acid. Acts as an acidity regulator. Safe at typical food concentrations."},
+            {"id": "en:caffeine",        "name": "Caffeine (150mg)",         "percent": 0.1, "safety": "caution", "function": "Stimulant",     "detail": "~150mg per 16oz can — over a third of the FDA's 400mg daily max. Can cause rapid heartbeat, anxiety, insomnia. Combined with guarana, total caffeine may be higher."},
+            {"id": "en:benzoic-acid",    "name": "Sodium Benzoate",          "percent": 0.05,"safety": "avoid",   "function": "Preservative",  "detail": "Reacts with citric acid under heat and UV to form benzene, a Group 1 carcinogen (IARC). Linked to hyperactivity and ADHD symptoms in children."},
+            {"id": "en:sucralose",       "name": "Sucralose",                "percent": 0.05,"safety": "caution", "function": "Sweetener",     "detail": "Artificial sweetener 600× sweeter than sugar. Some studies suggest gut microbiome disruption. FDA-approved but long-term effects remain debated."},
+            {"id": "en:acesulfame-k",    "name": "Acesulfame Potassium",     "percent": 0.05,"safety": "caution", "function": "Sweetener",     "detail": "Artificial sweetener (Ace-K) often used alongside sucralose to enhance sweetness. Some animal studies suggest potential effects on gut health and metabolism. FDA-approved."},
+            {"id": "en:sorbic-acid",     "name": "Potassium Sorbate",        "percent": 0.05,"safety": "safe",    "function": "Preservative",  "detail": "Common mold and yeast inhibitor. Considered safe at normal food concentrations."},
+            {"id": "en:niacinamide",     "name": "Niacinamide (B3)",         "percent": 0.01,"safety": "safe",    "function": "Vitamin",       "detail": "Vitamin B3, essential for energy metabolism. The dose in Monster (~100% DV) is well within safe limits."},
+            {"id": "en:riboflavin",      "name": "Riboflavin (B2)",          "percent": 0.01,"safety": "safe",    "function": "Vitamin",       "detail": "Vitamin B2, essential for energy production. Excess is excreted in urine (harmless yellow-green color)."},
+            {"id": "en:pyridoxine",      "name": "Pyridoxine HCl (B6)",      "percent": 0.01,"safety": "safe",    "function": "Vitamin",       "detail": "Vitamin B6, important for protein metabolism. Safe at the levels present in Monster."},
+            {"id": "en:guarana",         "name": "Guarana Extract",          "percent": 0.01,"safety": "caution", "function": "Stimulant",     "detail": "A natural caffeine source. When combined with added caffeine, total stimulant load increases beyond the label's stated amount."},
+            {"id": "en:l-carnitine",     "name": "L-Carnitine L-Tartrate",   "percent": 0.01,"safety": "safe",    "function": "Amino Acid",    "detail": "Involved in fatty acid transport into mitochondria. Generally well-tolerated at supplement doses."},
+            {"id": "en:d-glucuronolact", "name": "D-Glucuronolactone",       "percent": 0.01,"safety": "safe",    "function": "Metabolite",    "detail": "A naturally occurring compound produced by the liver during glucose metabolism. Considered safe at the amounts found in energy drinks."},
+            {"id": "en:inositol",        "name": "Inositol",                 "percent": 0.01,"safety": "safe",    "function": "Nutrient",      "detail": "A carbocyclic sugar involved in cell signaling. Safe and sometimes used therapeutically for mood support."},
+            {"id": "en:cyanocobalamin",  "name": "Cyanocobalamin (B12)",     "percent": 0.01,"safety": "safe",    "function": "Vitamin",       "detail": "Synthetic Vitamin B12, essential for nerve function and red blood cell production. Safe even at high doses."},
+        ],
+        "flagged": [
+            {"name": "Sodium Benzoate",       "safety": "avoid",   "reason": "Reacts with citric acid and heat to form benzene, a known Group 1 carcinogen (IARC). Linked to ADHD symptoms and hyperactivity in children in multiple double-blind studies."},
+            {"name": "Caffeine (150mg/can)",  "safety": "caution", "reason": "Over a third of the FDA's 400mg daily max in a single can. Combined with guarana's undisclosed caffeine, actual total may exceed 170mg. Risk of heart palpitations, hypertension, and insomnia."},
+            {"name": "Erythritol",            "safety": "caution", "reason": "A 2023 study (Nature Medicine) found elevated erythritol blood levels correlated with increased cardiovascular risk. More research is ongoing, but caution is warranted for high-frequency consumption."},
+            {"name": "Acesulfame Potassium",  "safety": "caution", "reason": "Animal studies suggest Ace-K may affect gut microbiome diversity and insulin response. Approved by FDA, but some researchers recommend limiting intake until more human data is available."},
+        ],
+    },
+    {
         "id": "granola001",
         "name": "Nature Valley Oats 'n Honey Granola Bar",
         "brand": "Nature Valley",
@@ -143,6 +181,12 @@ def search():
 def product(product_id):
     category = request.args.get("category", "food").lower()
 
+    # Check curated mock products first — they have pre-computed safety data
+    mock = get_mock_product(product_id)
+    if mock:
+        return jsonify({**mock, "nutrition": {}, "source": "mock"})
+
+    # Fall back to live Open Food/Beauty Facts API
     if category == "beauty":
         base = "https://world.openbeautyfacts.org"
     else:
@@ -175,9 +219,6 @@ def product(product_id):
             "source": "api",
         })
     except Exception:
-        mock = get_mock_product(product_id)
-        if mock:
-            return jsonify({**mock, "nutrition": {}, "source": "mock"})
         return jsonify({"error": "Product not found"}), 404
 
 
