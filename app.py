@@ -147,13 +147,20 @@ MOCK_PRODUCTS = [
 
 def search_mock(q, category):
     q_lower = q.lower()
-    results = [
-        p for p in MOCK_PRODUCTS
-        if q_lower in p["name"].lower()
-        or q_lower in p["brand"].lower()
-        or q_lower in p["ingredients_text"].lower()
-        or p["category"] == category
-    ]
+
+    def query_match(p):
+        return (
+            q_lower in p["name"].lower()
+            or q_lower in p["brand"].lower()
+            or q_lower in p["ingredients_text"].lower()
+        )
+
+    def category_match(p):
+        if category in ("", "all"):
+            return True
+        return p["category"] == category
+
+    results = [p for p in MOCK_PRODUCTS if query_match(p) and category_match(p)]
     return [{"id": p["id"], "name": p["name"], "brand": p["brand"],
              "image": p["image"], "category": p["category"],
              "ingredients_text": p["ingredients_text"]} for p in results]
@@ -161,23 +168,35 @@ def search_mock(q, category):
 def get_mock_product(product_id):
     return next((p for p in MOCK_PRODUCTS if p["id"] == product_id), None)
 
+def get_health_score(product):
+    # Backend standard field: health_score
+    raw = product.get("health_score")
+    if isinstance(raw, (int, float)):
+        return max(0, min(100, int(raw)))
+
+    grade = (product.get("nutrition_grades") or product.get("nutriscore_grade") or "").strip().lower()
+    grade_map = {"a": 95, "b": 85, "c": 70, "d": 50, "e": 30}
+    if grade in grade_map:
+        return grade_map[grade]
+
+    return 70
+
 
 # ─── Search ────────────────────────────────────────────────────────────────────
 
 @app.route("/search")
 def search():
     q = request.args.get("q", "").strip()
-    category = request.args.get("category", "food").lower()  # food | beauty
+    category = request.args.get("category", "all").lower()  # all | food | beauty
 
     if not q:
         return jsonify({"products": []})
 
-    if category == "beauty":
-        base = "https://world.openbeautyfacts.org"
-    else:
-        base = "https://world.openfoodfacts.org"
+    if category not in {"all", "food", "beauty"}:
+        products = search_mock(q, category)
+        return jsonify({"products": products, "source": "mock"})
 
-    try:
+    def fetch_from_api(base, source_category):
         resp = requests.get(
             f"{base}/cgi/search.pl",
             params={"search_terms": q, "json": 1, "page_size": 20},
@@ -191,9 +210,30 @@ def search():
                 "name": p.get("product_name", "Unknown"),
                 "brand": p.get("brands", ""),
                 "image": p.get("image_front_url", ""),
-                "category": category,
+                "category": source_category,
                 "ingredients_text": p.get("ingredients_text", ""),
             })
+        return products
+
+    try:
+        if category == "all":
+            food_products = fetch_from_api("https://world.openfoodfacts.org", "food")
+            beauty_products = fetch_from_api("https://world.openbeautyfacts.org", "beauty")
+            merged = food_products + beauty_products
+            deduped = []
+            seen = set()
+            for p in merged:
+                key = (p.get("id", ""), p.get("category", ""))
+                if key in seen:
+                    continue
+                seen.add(key)
+                deduped.append(p)
+            return jsonify({"products": deduped, "source": "api"})
+
+        if category == "beauty":
+            products = fetch_from_api("https://world.openbeautyfacts.org", "beauty")
+        else:
+            products = fetch_from_api("https://world.openfoodfacts.org", "food")
         return jsonify({"products": products, "source": "api"})
     except Exception:
         products = search_mock(q, category)
@@ -209,7 +249,7 @@ def product(product_id):
     # Check curated mock products first — they have pre-computed safety data
     mock = get_mock_product(product_id)
     if mock:
-        return jsonify({**mock, "nutrition": {}, "source": "mock"})
+        return jsonify({**mock, "health_score": get_health_score(mock), "nutrition": {}, "source": "mock"})
 
     # Fall back to live Open Food/Beauty Facts API
     if category == "beauty":
@@ -240,6 +280,7 @@ def product(product_id):
             "category": category,
             "ingredients": ingredients,
             "ingredients_text": p.get("ingredients_text", ""),
+            "health_score": get_health_score(p),
             "nutrition": p.get("nutriments", {}),
             "source": "api",
         })
@@ -358,3 +399,5 @@ def get_profile(profile_id):
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
+
+

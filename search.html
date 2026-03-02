@@ -547,7 +547,9 @@
 
   <script src="auth.js"></script>
   <script>
+    var BACKEND = 'http://localhost:5001';
     var activeCategory = 'all';
+    var staticProducts = [];
 
     document.getElementById('minTox').addEventListener('input', function () {
       document.getElementById('minToxVal').textContent = this.value;
@@ -560,7 +562,11 @@
       document.querySelectorAll('.pill').forEach(function (p) { p.classList.remove('active'); });
       btn.classList.add('active');
       activeCategory = cat;
-      filterProducts();
+      if ((document.getElementById('searchInput').value || '').trim()) {
+        applySearchFromInput();
+      } else {
+        filterProducts();
+      }
     }
 
     function filterProducts() {
@@ -646,12 +652,165 @@
         var price = priceMap[key] || { label: '$--', tier: 'mid' };
         var span = document.createElement('span');
         span.className = 'pc-rating-pill r-price ' + price.tier;
-        span.textContent = '💲 ' + price.label;
+        span.textContent = '💲 ' + price.label.replace('$', '');
         ratings.appendChild(span);
       });
     }
 
     /* ── Pre-fill from URL ?q= ── */
+    function escHtml(s) {
+      return String(s || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function categoryLabel(cat) {
+      var c = String(cat || '').toLowerCase();
+      if (c === 'beauty') return 'Beauty';
+      if (c === 'skincare') return 'Skincare';
+      if (c === 'supplements') return 'Supplements';
+      if (c === 'household') return 'Household';
+      return 'Food';
+    }
+
+    function categoryEmoji(cat) {
+      var c = String(cat || '').toLowerCase();
+      if (c === 'beauty') return '💄';
+      if (c === 'skincare') return '🧴';
+      if (c === 'supplements') return '💊';
+      if (c === 'household') return '🧹';
+      return '🥗';
+    }
+
+    var productMeta = {
+      'cerave moisturizing cream': { user: '4.1', health: 72, match: 88, price: '$14.99', tier: 'mid' },
+      'neutrogena sunscreen spf 50': { user: '4.3', health: 44, match: 71, price: '$10.49', tier: 'low' },
+      'kind almond dark chocolate bar': { user: '4.6', health: 88, match: 92, price: '$1.89', tier: 'low' },
+      'kind dark chocolate nuts & sea salt bar': { user: '4.6', health: 88, match: 92, price: '$1.89', tier: 'low' },
+      'garden of life vitamin d3': { user: '4.7', health: 95, match: 97, price: '$19.99', tier: 'high' },
+      'the ordinary niacinamide serum': { user: '4.5', health: 91, match: 94, price: '$7.80', tier: 'low' },
+      'clif bar chocolate chip': { user: '4.0', health: 61, match: 74, price: '$1.79', tier: 'low' },
+      'la roche posay cleanser': { user: '4.4', health: 84, match: 89, price: '$16.99', tier: 'mid' },
+      'seventh generation dish soap': { user: '4.2', health: 87, match: 90, price: '$4.99', tier: 'low' },
+      'olly sleep melatonin gummies': { user: '4.3', health: 67, match: 80, price: '$15.49', tier: 'mid' },
+      'maybelline fit me foundation': { user: '4.1', health: 38, match: 62, price: '$9.99', tier: 'low' },
+      'trader joes cauliflower gnocchi': { user: '4.5', health: 93, match: 96, price: '$3.49', tier: 'low' },
+      'vanicream moisturizing cream sensitive skin': { user: '4.6', health: 91, match: 94, price: '$13.49', tier: 'mid' },
+      'monster energy ultra wild passion': { user: '4.3', health: 52, match: 40, price: '$2.79', tier: 'mid' },
+      'chi forest sparkling pomelo zest': { user: '4.2', health: 80, match: 68, price: '$2.29', tier: 'low' }
+    };
+
+    function healthClass(score) {
+      if (score < 50) return 'low';
+      if (score < 75) return 'med';
+      return '';
+    }
+
+    function normalizeProduct(raw) {
+      var id = String(raw.id || '').trim();
+      var category = String(raw.category || '').toLowerCase() || 'food';
+      var name = String(raw.name || 'Unknown Product').trim();
+      var slug = toSlug(name);
+      var meta = productMeta[slug] || { user: '4.0', health: 70, match: 60, price: '$--', tier: 'mid' };
+      var href = id ? ('product.html?id=' + encodeURIComponent(id) + '&category=' + encodeURIComponent(category)) : 'product.html';
+      return {
+        id: id,
+        name: name,
+        brand: String(raw.brand || '').trim(),
+        category: category,
+        image: String(raw.image || '').trim(),
+        href: href,
+        user: meta.user,
+        health: meta.health,
+        match: meta.match,
+        price: meta.price,
+        priceTier: meta.tier
+      };
+    }
+
+    function extractStaticProducts() {
+      return Array.from(document.querySelectorAll('.product-card')).map(function (card) {
+        var href = card.getAttribute('href') || 'product.html';
+        var hrefId = '';
+        var hrefCategory = '';
+        try {
+          var u = new URL(href, window.location.href);
+          hrefId = u.searchParams.get('id') || '';
+          hrefCategory = u.searchParams.get('category') || '';
+        } catch (e) {}
+        return normalizeProduct({
+          id: hrefId,
+          name: (card.querySelector('.pc-name') || { textContent: card.dataset.name || '' }).textContent,
+          brand: (card.querySelector('.pc-brand') || { textContent: '' }).textContent,
+          category: hrefCategory || card.dataset.cat || 'food',
+          image: ((card.querySelector('.pc-thumb img') || {}).src || '')
+        });
+      });
+    }
+
+    function renderProducts(products) {
+      var grid = document.getElementById('productGrid');
+      grid.innerHTML = products.map(function (p) {
+        var cat = String(p.category || '').toLowerCase();
+        var fallback = categoryEmoji(cat);
+        var imageHtml = p.image
+          ? '<img src="' + escHtml(p.image) + '" alt="' + escHtml(p.name) + '" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentNode.textContent=\'' + fallback + '\';" />'
+          : fallback;
+        var healthCls = healthClass(Number(p.health));
+        var healthClassName = 'pc-rating-pill r-health' + (healthCls ? (' ' + healthCls) : '');
+        var brand = p.brand || 'Unknown Brand';
+
+        return '<a href="' + escHtml(p.href) + '" class="product-card" data-name="' + escHtml(toSlug(p.name)) + '" data-cat="' + escHtml(cat) + '">' +
+          '<div class="pc-thumb">' + imageHtml + '</div>' +
+          '<div class="pc-category">' + escHtml(categoryLabel(cat)) + '</div>' +
+          '<div class="pc-name">' + escHtml(p.name) + '</div>' +
+          '<div class="pc-brand">' + escHtml(brand) + '</div>' +
+          '<div class="pc-ratings">' +
+            '<span class="pc-rating-pill r-user">⭐ ' + escHtml(p.user) + '</span>' +
+            '<span class="' + healthClassName + '">☀️ ' + escHtml(String(p.health)) + '</span>' +
+            '<span class="pc-rating-pill r-match">🎯 ' + escHtml(String(p.match)) + '%</span>' +
+            '<span class="pc-rating-pill r-price ' + escHtml(p.priceTier) + '">💲 ' + escHtml(p.price.replace('$', '')) + '</span>' +
+          '</div>' +
+        '</a>';
+      }).join('');
+      updateProfileMatchVisibility();
+    }
+
+    async function fetchSearchResults(q) {
+      if (activeCategory !== 'all' && activeCategory !== 'food' && activeCategory !== 'beauty') {
+        return null;
+      }
+      var url = BACKEND + '/search?q=' + encodeURIComponent(q) + '&category=' + encodeURIComponent(activeCategory);
+      var resp = await fetch(url);
+      if (!resp.ok) throw new Error('search failed');
+      var data = await resp.json();
+      var products = Array.isArray(data.products) ? data.products : [];
+      return products.map(function (p) { return normalizeProduct(p); });
+    }
+
+    async function applySearchFromInput() {
+      var q = (document.getElementById('searchInput').value || '').trim();
+      if (!q) {
+        renderProducts(staticProducts);
+        filterProducts();
+        return;
+      }
+      try {
+        var fetched = await fetchSearchResults(q);
+        if (Array.isArray(fetched)) {
+          renderProducts(fetched);
+          filterProducts();
+          return;
+        }
+      } catch (e) {
+        /* fallback to static cards */
+      }
+      renderProducts(staticProducts);
+      filterProducts();
+    }
+
     function updateProfileMatchVisibility() {
       var loggedIn = !!(window.HLAuth && HLAuth.isLoggedIn && HLAuth.isLoggedIn());
       var matchFilterGroup = document.getElementById('match-filter-group');
@@ -670,17 +829,30 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+      staticProducts = extractStaticProducts();
       var params = new URLSearchParams(window.location.search);
       var q = params.get('q');
       injectRealItemImages();
       injectPricePills();
       if (q) {
         document.getElementById('searchInput').value = q;
-        filterProducts();
+        applySearchFromInput();
       } else {
+        renderProducts(staticProducts);
         filterProducts();
       }
       updateProfileMatchVisibility();
+
+      document.getElementById('searchInput').addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        var query = (this.value || '').trim();
+        var next = new URL(window.location.href);
+        if (query) next.searchParams.set('q', query);
+        else next.searchParams.delete('q');
+        window.history.replaceState({}, '', next.toString());
+        applySearchFromInput();
+      });
     });
 
     var prevAuthChange = window.onAuthChange;
